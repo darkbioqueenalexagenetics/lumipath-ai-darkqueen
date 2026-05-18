@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LumiPath — Join Free</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#080c18; --bg2:#0f1629; --bg3:#162040;
+  --gold:#f0b429; --gold-dim:rgba(240,180,41,0.13); --gold-bdr:rgba(240,180,41,0.25);
+  --teal:#00c9a7; --teal-dim:rgba(0,201,167,0.1);
+  --blue:#4f8ef7; --blue-dim:rgba(79,142,247,0.1);
+  --text:#eef2ff; --muted:#7b8cad;
+  --border:rgba(255,255,255,0.08); --card:rgba(255,255,255,0.04);
+  --success:#34d399; --danger:#f87171; --warning:#fbbf24;
+  --inp-bg:rgba(255,255,255,0.05); --inp-bdr:rgba(255,255,255,0.11);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(8,12,24,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none;}
+.logo-dot{width:9px;height:9px;background:var(--gold);border-radius:50%;box-shadow:0 0 10px var(--gold);animation:glow 2.5s ease-in-out infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 8px var(--gold);}50%{box-shadow:0 0 18px var(--gold),0 0 30px rgba(240,180,41,0.4);}}
+.logo-text{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;}
+.logo-lumi{color:var(--gold);} .logo-path{color:var(--text);}
+.nav-back{color:var(--muted);text-decoration:none;font-size:0.84rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--text);}
+
+/* PAGE WRAP */
+.page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 1.5rem 3rem;position:relative;overflow:hidden;}
+.page::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(240,180,41,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(240,180,41,0.03) 1px,transparent 1px);background-size:55px 55px;pointer-events:none;}
+.g1{position:absolute;top:-120px;right:-120px;width:480px;height:480px;background:radial-gradient(circle,rgba(240,180,41,0.09) 0%,transparent 65%);pointer-events:none;}
+.g2{position:absolute;bottom:-150px;left:-80px;width:420px;height:420px;background:radial-gradient(circle,rgba(0,201,167,0.07) 0%,transparent 65%);pointer-events:none;}
+
+/* CARD */
+.card{position:relative;width:100%;max-width:460px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2.4rem;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+
+/* SCREENS */
+.screen{display:none;animation:fadeIn 0.3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* BADGE / TAGS */
+.badge{display:inline-flex;align-items:center;gap:0.5rem;background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);font-size:0.71rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.32rem 0.85rem;border-radius:100px;margin-bottom:1.6rem;}
+.bdot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:glow 2s ease infinite;}
+.step-tag{display:inline-flex;align-items:center;font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:0.26rem 0.75rem;border-radius:100px;margin-bottom:1.3rem;}
+.tag-g{background:rgba(0,201,167,0.1);color:var(--teal);border:1px solid rgba(0,201,167,0.2);}
+.tag-b{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(79,142,247,0.2);}
+.tag-q{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-bdr);}
+
+/* TITLE */
+.stitle{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.45rem;}
+.stitle em{color:var(--gold);font-style:italic;} .stitle .tc{color:var(--teal);}
+.ssub{font-size:0.86rem;color:var(--muted);font-weight:300;margin-bottom:1.8rem;line-height:1.65;}
+
+/* CHOOSE BUTTONS */
+.choose-list{display:flex;flex-direction:column;gap:0.8rem;margin-bottom:1.6rem;}
+.cbtn{width:100%;display:flex;align-items:center;gap:0.9rem;background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:12px;padding:1rem 1.2rem;cursor:pointer;transition:all 0.2s;text-decoration:none;text-align:left;}
+.cbtn:hover{border-color:var(--gold-bdr);background:var(--gold-dim);}
+.cbtn:hover .carr{color:var(--gold);}
+.cico{font-size:1.3rem;flex-shrink:0;} .cbody{flex:1;}
+.ctitle{font-size:0.92rem;font-weight:600;color:var(--text);margin-bottom:0.1rem;}
+.csub{font-size:0.76rem;color:var(--muted);font-weight:300;}
+.carr{color:var(--muted);font-size:1rem;transition:color 0.2s;}
+
+/* DIVIDER */
+.div{display:flex;align-items:center;gap:0.8rem;margin:1rem 0;color:var(--muted);font-size:0.75rem;}
+.div::before,.div::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* GOOGLE BTN */
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:0.7rem;background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:10px;padding:0.78rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all 0.2s;margin-bottom:1.3rem;}
+.gbtn:hover{border-color:rgba(255,255,255,0.15);background:var(--bg3);}
+.gico{display:inline-block;width:18px;height:18px;border-radius:50%;background:conic-gradient(#ea4335 90deg,#fbbc05 90deg 180deg,#34a853 180deg 270deg,#4285f4 270deg);flex-shrink:0;}
+
+/* FIELDS */
+.field{margin-bottom:0.95rem;}
+.flabel{display:block;font-size:0.77rem;font-weight:500;color:var(--muted);margin-bottom:0.38rem;letter-spacing:0.02em;}
+.flabel span{color:var(--danger);}
+.finput{width:100%;background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:8px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.89rem;padding:0.7rem 0.95rem;outline:none;transition:all 0.2s;}
+.finput::placeholder{color:rgba(123,140,173,0.5);}
+.finput:focus{border-color:rgba(240,180,41,0.5);box-shadow:0 0 0 3px rgba(240,180,41,0.1);}
+select.finput{cursor:pointer;appearance:none;}
+select.finput option{background:var(--bg2);color:var(--text);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+
+/* PW STRENGTH */
+.pwbars{display:flex;gap:3px;margin-top:0.45rem;}
+.pwbar{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background 0.3s;}
+.pwbar.w{background:var(--danger);} .pwbar.m{background:var(--warning);} .pwbar.s{background:var(--success);}
+.pwlbl{font-size:0.7rem;color:var(--muted);margin-top:0.22rem;}
+
+/* BUTTONS */
+.btnp{width:100%;background:var(--gold);color:#080c18;border:none;border-radius:10px;padding:0.82rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:0.4rem;}
+.btnp:hover{opacity:0.88;transform:translateY(-1px);box-shadow:0 10px 26px rgba(240,180,41,0.28);}
+.btnp:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.btnb{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:0.78rem 1.3rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.84rem;cursor:pointer;transition:all 0.2s;}
+.btnb:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
+.fnote{text-align:center;margin-top:0.9rem;font-size:0.74rem;color:var(--muted);line-height:1.6;}
+.fnote a{color:var(--gold);text-decoration:none;}
+.fnote a:hover{text-decoration:underline;}
+.brow{display:flex;gap:0.6rem;margin-top:0.9rem;}
+.brow .btnp{margin-top:0;}
+
+/* TRUST STRIP */
+.tstrip{display:flex;flex-direction:column;gap:0.42rem;margin-top:1.4rem;padding-top:1.1rem;border-top:1px solid var(--border);}
+.ti{display:flex;align-items:center;gap:0.45rem;font-size:0.73rem;color:var(--muted);font-weight:300;}
+.td{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.td-g{background:var(--gold);} .td-t{background:var(--teal);} .td-b{background:var(--blue);}
+
+/* QUIZ */
+.qprog{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.6rem;}
+.qtrack{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.qfill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.4s ease;}
+.qlbl{font-size:0.72rem;color:var(--muted);white-space:nowrap;}
+
+.qstep{display:none;} .qstep.active{display:block;}
+.qnum{font-size:0.69rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.45rem;}
+.qtitle{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:0.38rem;}
+.qsub{font-size:0.81rem;color:var(--muted);font-weight:300;margin-bottom:1.3rem;line-height:1.6;}
+
+.qopts{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.2rem;}
+.qopt{display:flex;align-items:center;gap:0.8rem;background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:10px;padding:0.8rem 0.95rem;cursor:pointer;transition:all 0.2s;user-select:none;}
+.qopt:hover{border-color:var(--gold-bdr);background:var(--gold-dim);}
+.qopt.sel{border-color:var(--gold);background:var(--gold-dim);}
+.qopt.sel .qchk{background:var(--gold);border-color:var(--gold);}
+.qopt.sel .qchk::after{opacity:1;}
+.qchk{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--inp-bdr);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;position:relative;}
+.qchk::after{content:'✓';font-size:0.6rem;color:#080c18;opacity:0;transition:opacity 0.2s;}
+.qico{font-size:1rem;flex-shrink:0;}
+.qbody .qt{font-size:0.84rem;font-weight:500;color:var(--text);}
+.qbody .qs{font-size:0.72rem;color:var(--muted);font-weight:300;}
+
+.chips{display:flex;flex-wrap:wrap;gap:0.42rem;margin-bottom:1.2rem;}
+.chip{background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:100px;padding:0.35rem 0.82rem;font-size:0.77rem;color:var(--muted);cursor:pointer;transition:all 0.2s;user-select:none;}
+.chip:hover{border-color:var(--gold-bdr);color:var(--text);}
+.chip.sel{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);font-weight:500;}
+
+.qnav{display:flex;gap:0.6rem;}
+.qnav .btnp{margin-top:0;}
+
+/* DONE */
+.done-ico{width:72px;height:72px;border-radius:50%;background:var(--gold-dim);border:2px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.3rem;animation:pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes pop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.done-title{font-family:'Fraunces',serif;font-size:1.75rem;font-weight:800;letter-spacing:-0.025em;text-align:center;margin-bottom:0.45rem;}
+.done-title em{color:var(--gold);font-style:italic;}
+.done-sub{font-size:0.84rem;color:var(--muted);text-align:center;line-height:1.7;max-width:330px;margin:0 auto 1.6rem;font-weight:300;}
+.done-list{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.6rem;}
+.ditem{display:flex;align-items:center;gap:0.65rem;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.72rem 0.95rem;font-size:0.81rem;color:var(--muted);font-weight:300;}
+.dchk{color:var(--success);flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <span class="logo-dot"></span>
+    <span class="logo-text"><span class="logo-lumi">Lumi</span><span class="logo-path">Path</span></span>
+  </a>
+  <a href="#" class="nav-back">← Back to home</a>
+</nav>
+
+<div class="page">
+  <div class="g1"></div><div class="g2"></div>
+
+  <div class="card">
+
+    <!-- ═══ SCREEN 0: WELCOME / CHOOSE ═══ -->
+    <div class="screen active" id="s0">
+      <div class="badge"><span class="bdot"></span>Free · No credit card · Honest AI</div>
+      <div class="stitle">Welcome to <em>Lumi</em><span class="tc">Path</span></div>
+      <p class="ssub">Your honest AI companion for scholarships, research, and academic growth. How would you like to continue?</p>
+
+      <div class="choose-list">
+        <button class="cbtn" onclick="go('s1')">
+          <span class="cico">✨</span>
+          <div class="cbody">
+            <div class="ctitle">Create a free account</div>
+            <div class="csub">New to LumiPath — join in 2 minutes</div>
+          </div>
+          <span class="carr">→</span>
+        </button>
+        <button class="cbtn" onclick="go('s-login')">
+          <span class="cico">🔑</span>
+          <div class="cbody">
+            <div class="ctitle">Log in to my account</div>
+            <div class="csub">Already a member — continue your journey</div>
+          </div>
+          <span class="carr">→</span>
+        </button>
+      </div>
+
+      <div class="div">or continue with</div>
+      <button class="gbtn" onclick="gAuth()"><span class="gico"></span>Continue with Google</button>
+
+      <div class="tstrip">
+        <div class="ti"><span class="td td-g"></span>Free forever — no credit card required</div>
+        <div class="ti"><span class="td td-t"></span>Your data is never sold or shared with anyone</div>
+        <div class="ti"><span class="td td-b"></span>Delete your account anytime — no questions asked</div>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN 1: SIGN UP ═══ -->
+    <div class="screen" id="s1">
+      <div class="step-tag tag-g">Step 1 of 3 — Create account</div>
+      <div class="stitle">Create your <em>account</em></div>
+      <p class="ssub">Fill in the details below. Takes less than 2 minutes.</p>
+
+      <button class="gbtn" onclick="gAuth()"><span class="gico"></span>Sign up with Google — fastest option</button>
+      <div class="div">or sign up with email</div>
+
+      <div class="frow">
+        <div class="field"><label class="flabel">First name <span>*</span></label><input class="finput" type="text" placeholder="e.g. Aisha" id="fn"/></div>
+        <div class="field"><label class="flabel">Last name <span>*</span></label><input class="finput" type="text" placeholder="e.g. Rahman" id="ln"/></div>
+      </div>
+      <div class="field"><label class="flabel">Email address <span>*</span></label><input class="finput" type="email" placeholder="you@university.edu" id="em"/></div>
+      <div class="field">
+        <label class="flabel">Password <span>*</span></label>
+        <input class="finput" type="password" placeholder="At least 8 characters" id="pw" oninput="chkPw(this.value)"/>
+        <div class="pwbars"><div class="pwbar" id="b1"></div><div class="pwbar" id="b2"></div><div class="pwbar" id="b3"></div><div class="pwbar" id="b4"></div></div>
+        <div class="pwlbl" id="pwlbl">Enter a password</div>
+      </div>
+      <div class="field">
+        <label class="flabel">Your country <span>*</span></label>
+        <select class="finput" id="ctry">
+          <option value="">— Select your country —</option>
+          <option>India</option><option>Pakistan</option><option>Bangladesh</option>
+          <option>Nigeria</option><option>Kenya</option><option>Ghana</option>
+          <option>Indonesia</option><option>Malaysia</option><option>Philippines</option>
+          <option>Vietnam</option><option>Nepal</option><option>Sri Lanka</option>
+          <option>Egypt</option><option>Ethiopia</option><option>Iran</option>
+          <option>Turkey</option><option>Brazil</option><option>Other</option>
+        </select>
+      </div>
+
+      <button class="btnp" onclick="goQuiz()">Continue → Build your profile</button>
+      <p class="fnote">By creating an account you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br/>Already have an account? <a href="#" onclick="go('s-login')">Log in here</a></p>
+      <div style="margin-top:0.9rem;"><button class="btnb" onclick="go('s0')">← Back</button></div>
+    </div>
+
+    <!-- ═══ SCREEN: LOGIN ═══ -->
+    <div class="screen" id="s-login">
+      <div class="step-tag tag-b">Returning member</div>
+      <div class="stitle">Welcome <em>back!</em></div>
+      <p class="ssub">Log in to continue your scholarship journey from where you left off.</p>
+
+      <button class="gbtn" onclick="gAuth()"><span class="gico"></span>Continue with Google</button>
+      <div class="div">or log in with email</div>
+
+      <div class="field"><label class="flabel">Email address <span>*</span></label><input class="finput" type="email" placeholder="you@university.edu" id="lem"/></div>
+      <div class="field">
+        <label class="flabel">Password <span>*</span></label>
+        <input class="finput" type="password" placeholder="Your password" id="lpw"/>
+        <div style="margin-top:0.35rem;"><a href="#" style="font-size:0.72rem;color:var(--gold);text-decoration:none;">Forgot your password?</a></div>
+      </div>
+
+      <button class="btnp" onclick="doLogin()">Log in to LumiPath →</button>
+      <p class="fnote">Don't have an account? <a href="#" onclick="go('s1')">Create one free →</a></p>
+      <div style="margin-top:0.9rem;"><button class="btnb" onclick="go('s0')">← Back</button></div>
+
+      <div class="tstrip">
+        <div class="ti"><span class="td td-g"></span>Your progress and data are saved automatically</div>
+        <div class="ti"><span class="td td-t"></span>All your scholarship data stays completely private</div>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN 2: QUIZ ═══ -->
+    <div class="screen" id="s-quiz">
+      <div class="step-tag tag-q">Step 2 of 3 — Build your profile</div>
+      <div class="qprog">
+        <div class="qtrack"><div class="qfill" id="qfill" style="width:20%"></div></div>
+        <span class="qlbl" id="qlbl">Question 1 of 5</span>
+      </div>
+
+      <!-- Q1 -->
+      <div class="qstep active" id="q1">
+        <div class="qnum">Question 01 — Field of study</div>
+        <div class="qtitle">What is your main field?</div>
+        <div class="qsub">Helps us match scholarships and build your personalized research roadmap.</div>
+        <div class="qopts">
+          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">🧬</span><div class="qbody"><div class="qt">Biotechnology / Life Sciences</div><div class="qs">Genetics, microbiology, biomedical, biochemistry</div></div></div>
+          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">💻</span><div class="qbody"><div class="qt">Technology / Computer Science</div><div class="qs">AI, ML, software engineering, cybersecurity</div></div></div>
+          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">⚙️</span><div class="qbody"><div class="qt">Engineering</div><div class="qs">Biomedical, mechanical, electrical, nanotech</div></div></div>
+          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">📊</span><div class="qbody"><div class="qt">Business / Economics</div><div class="qs">Finance, entrepreneurship, management</div></div></div>
+          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">🎓</span><div class="qbody"><div class="qt">Humanities / Social Sciences</div><div class="qs">Psychology, linguistics, international relations</div></div></div>
+        </div>
+        <div class="qnav"><button class="btnp" id="nq1" disabled onclick="nxtQ(1)">Next →</button></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="qstep" id="q2">
+        <div class="qnum">Question 02 — Degree level</div>
+        <div class="qtitle">What degree are you applying for?</div>
+        <div class="qsub">Different scholarships exist at each academic level.</div>
+        <div class="qopts">
+          <div class="qopt" onclick="pick(this,'q2')"><div class="qchk"></div><span class="qico">📘</span><div class="qbody"><div class="qt">Bachelor's degree</div><div class="qs">Undergraduate — first degree</div></div></div>
+          <div class="qopt" onclick="pick(this,'q2')"><div class="qchk"></div><span class="qico">📗</span><div class="qbody"><div class="qt">Master's degree</div><div class="qs">Postgraduate — MSc, MA, MBA</div></div></div>
+          <div class="qopt" onclick="pick(this,'q2')"><div class="qchk"></div><span class="qico">📙</span><div class="qbody"><div class="qt">PhD / Doctoral</div><div class="qs">Research degree — doctorate</div></div></div>
+          <div class="qopt" onclick="pick(this,'q2')"><div class="qchk"></div><span class="qico">🔬</span><div class="qbody"><div class="qt">Research / Postdoc</div><div class="qs">After PhD — research fellowship</div></div></div>
+        </div>
+        <div class="qnav"><button class="btnb" onclick="prvQ(2)">← Back</button><button class="btnp" id="nq2" disabled onclick="nxtQ(2)">Next →</button></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="qstep" id="q3">
+        <div class="qnum">Question 03 — Target countries</div>
+        <div class="qtitle">Which countries interest you?</div>
+        <div class="qsub">Select all that apply — personalizes your scholarship matches immediately.</div>
+        <div class="chips">
+          <span class="chip" onclick="tog(this,'q3')">🇰🇷 South Korea</span>
+          <span class="chip" onclick="tog(this,'q3')">🇨🇳 China</span>
+          <span class="chip" onclick="tog(this,'q3')">🇯🇵 Japan</span>
+          <span class="chip" onclick="tog(this,'q3')">🇩🇪 Germany</span>
+          <span class="chip" onclick="tog(this,'q3')">🇬🇧 UK</span>
+          <span class="chip" onclick="tog(this,'q3')">🇺🇸 USA</span>
+          <span class="chip" onclick="tog(this,'q3')">🇦🇺 Australia</span>
+          <span class="chip" onclick="tog(this,'q3')">🇨🇦 Canada</span>
+          <span class="chip" onclick="tog(this,'q3')">🇳🇱 Netherlands</span>
+          <span class="chip" onclick="tog(this,'q3')">🇸🇪 Sweden</span>
+          <span class="chip" onclick="tog(this,'q3')">🇫🇷 France</span>
+          <span class="chip" onclick="tog(this,'q3')">🇸🇬 Singapore</span>
+          <span class="chip" onclick="tog(this,'q3')">🌍 Open to anywhere</span>
+        </div>
+        <div class="qnav"><button class="btnb" onclick="prvQ(3)">← Back</button><button class="btnp" id="nq3" disabled onclick="nxtQ(3)">Next →</button></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="qstep" id="q4">
+        <div class="qnum">Question 04 — Language preparation</div>
+        <div class="qtitle">Which languages are you preparing?</div>
+        <div class="qsub">LumiPath builds a personalized study plan for each language you select.</div>
+        <div class="chips">
+          <span class="chip" onclick="tog(this,'q4')">🇬🇧 English (IELTS/TOEFL)</span>
+          <span class="chip" onclick="tog(this,'q4')">🇰🇷 Korean (TOPIK)</span>
+          <span class="chip" onclick="tog(this,'q4')">🇨🇳 Chinese (HSK)</span>
+          <span class="chip" onclick="tog(this,'q4')">🇩🇪 German</span>
+          <span class="chip" onclick="tog(this,'q4')">🇫🇷 French</span>
+          <span class="chip" onclick="tog(this,'q4')">🇯🇵 Japanese (JLPT)</span>
+          <span class="chip" onclick="tog(this,'q4')">Only my native language</span>
+        </div>
+        <div class="qnav"><button class="btnb" onclick="prvQ(4)">← Back</button><button class="btnp" id="nq4" disabled onclick="nxtQ(4)">Next →</button></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="qstep" id="q5">
+        <div class="qnum">Question 05 — Your main goal</div>
+        <div class="qtitle">What is your priority right now?</div>
+        <div class="qsub">Shows you the most useful features first when you enter your dashboard.</div>
+        <div class="qopts">
+          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🔎</span><div class="qbody"><div class="qt">Find a scholarship to apply to</div><div class="qs">I want to discover and apply now</div></div></div>
+          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">📝</span><div class="qbody"><div class="qt">Improve my SOP or documents</div><div class="qs">I have an SOP and want honest AI feedback</div></div></div>
+          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🧬</span><div class="qbody"><div class="qt">Build my research skills</div><div class="qs">I want to grow my research background</div></div></div>
+          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🌏</span><div class="qbody"><div class="qt">Prepare for a language test</div><div class="qs">TOPIK, HSK, or IELTS is my focus</div></div></div>
+          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🗺️</span><div class="qbody"><div class="qt">Just exploring for now</div><div class="qs">I want to understand all my options first</div></div></div>
+        </div>
+        <div class="qnav"><button class="btnb" onclick="prvQ(5)">← Back</button><button class="btnp" id="nq5" disabled onclick="go('s-done')">Build my profile →</button></div>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN: DONE ═══ -->
+    <div class="screen" id="s-done">
+      <div class="done-ico">✨</div>
+      <div class="done-title">Welcome to <em>LumiPath!</em></div>
+      <p class="done-sub">Your profile is built. We have personalized everything based on your answers — scholarships, roadmap, language planner, and more.</p>
+      <div class="done-list">
+        <div class="ditem"><span class="dchk">✓</span>Scholarship matches personalized to your exact profile</div>
+        <div class="ditem"><span class="dchk">✓</span>Research roadmap ready for your specific field</div>
+        <div class="ditem"><span class="dchk">✓</span>Language study plan set for your target tests</div>
+        <div class="ditem"><span class="dchk">✓</span>Application tracker activated and ready to use</div>
+        <div class="ditem"><span class="dchk">✓</span>Honest AI guidance mode — active on all features</div>
+      </div>
+      <button class="btnp" onclick="alert('Dashboard coming in Part 3! 🚀')">Go to my dashboard →</button>
+      <p class="fnote" style="margin-top:1rem;">Remember: LumiPath AI <strong style="color:var(--text);">guides</strong> you — it never writes for you. Your authentic voice wins. 🧭</p>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /page -->
+
+<script>
+// Screen navigation
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Google auth
+function gAuth(){alert('Google sign-in will connect to Supabase Auth in the live version.');}
+
+// Signup → Quiz
+function goQuiz(){
+  if(!document.getElementById('fn').value.trim()||
+     !document.getElementById('em').value.trim()||
+     !document.getElementById('pw').value||
+     !document.getElementById('ctry').value){
+    alert('Please fill in all required fields to continue.');return;
+  }
+  go('s-quiz');
+}
+
+// Login
+function doLogin(){
+  if(!document.getElementById('lem').value.trim()||!document.getElementById('lpw').value){
+    alert('Please enter your email and password.');return;
+  }
+  go('s-done');
+}
+
+// Password strength
+function chkPw(v){
+  let s=0;
+  if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  ['b1','b2','b3','b4'].forEach((id,i)=>{
+    const el=document.getElementById(id);el.className='pwbar';
+    if(i<s)el.classList.add(s<=1?'w':s<=2?'m':'s');
+  });
+  document.getElementById('pwlbl').textContent=v.length===0?'Enter a password':['','Weak — add numbers and symbols','Getting better — add uppercase','Strong password!','Very strong!'][s];
+}
+
+// Quiz: single select
+function pick(el,qid){
+  el.closest('.qstep').querySelectorAll('.qopt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('n'+qid).disabled=false;
+}
+
+// Quiz: chip multi select
+function tog(el,qid){
+  el.classList.toggle('sel');
+  const any=el.closest('.qstep').querySelectorAll('.chip.sel').length>0;
+  document.getElementById('n'+qid).disabled=!any;
+}
+
+// Quiz navigation
+let cq=1;
+function nxtQ(from){
+  document.getElementById('q'+from).classList.remove('active');
+  cq=from+1;
+  document.getElementById('q'+cq).classList.add('active');
+  updProg();
+}
+function prvQ(from){
+  document.getElementById('q'+from).classList.remove('active');
+  cq=from-1;
+  document.getElementById('q'+cq).classList.add('active');
+  updProg();
+}
+function updProg(){
+  document.getElementById('qfill').style.width=(cq/5*100)+'%';
+  document.getElementById('qlbl').textContent='Question '+cq+' of 5';
+}
+</script>
+</body>
+</html>
