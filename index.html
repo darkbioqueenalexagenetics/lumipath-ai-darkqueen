@@ -1,4 +1,4 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -943,7 +943,7 @@ footer {
 
 <!-- ══ NAV ══ -->
 <nav>
-  <a href="index.html" class="logo">
+  <a href="#" class="logo">
     <span class="logo-dot"></span>
     <span class="logo-text">
       <span class="logo-lumi">Lumi</span><span class="logo-path">Path</span>
@@ -951,14 +951,14 @@ footer {
   </a>
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
-    <li><a href="#how">How it works</a></li>
+    <li><a href="login.html">How it works</a></li>
     <li><a href="#trust">Trust</a></li>
     <li><a href="#journey">Journey</a></li>
     <li><a href="#about">About</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="login.html" class="btn-ghost">Log in</a>
-    <a href="signup.html" class="btn-gold">Start Free</a>
+    <a href="#" class="btn-ghost">Log in</a>
+    <a href="#" class="btn-gold">Start Free</a>
   </div>
 </nav>
 
@@ -991,9 +991,9 @@ footer {
     </div>
 
     <div class="hero-actions">
-      <a href="signup.html" class="btn-primary-lg">Start Free →</a>
-      <a href="#features" class="btn-outline-lg">Explore features</a>
-      <a href="scholarships.html" class="btn-outline-lg">Find scholarships</a>
+      <a href="login.html" class="btn-primary-lg">Start Free →</a>
+      <a href="login.html" class="btn-outline-lg">Explore features</a>
+      <a href="login.html" class="btn-outline-lg">Find scholarships</a>
     </div>
 
     <div class="hero-stats">
@@ -1339,7 +1339,7 @@ footer {
     <p>Free to start. No credit card. AI that guides you — never writes for you. Your authentic voice, your real growth.</p>
     <div class="cta-actions">
       <a href="login.html" class="btn-primary-lg">Create free account →</a>
-      <a href="signup.html" class="btn-outline-lg">Browse scholarships</a>
+      <a href="login.html" class="btn-outline-lg">Browse scholarships</a>
     </div>
     <p class="cta-note">
       <span>✓ Verified sources</span> &nbsp;·&nbsp;
@@ -1353,7 +1353,7 @@ footer {
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
-      <a href="#" class="logo">
+      <a href="login.html" class="logo">
         <span class="logo-dot"></span>
         <span class="logo-text">
           <span class="logo-lumi">Lumi</span><span class="logo-path">Path</span>
@@ -1364,31 +1364,31 @@ footer {
     <div>
       <div class="footer-col-title">Platform</div>
       <ul class="footer-links">
-        <li><a href="scholarships.html">Scholarship Finder</a></li>
-        <li><a href="sop-feedback.html">SOP Feedback</a></li>
-        <li><a href="research-roadmap.html">Research Roadmap</a></li>
-        <li><a href="language-learning.html">Language Learning</a></li>
-        <li><a href="application-tracker.html">Application Tracker</a></li>
+        <li><a href="login.html">Scholarship Finder</a></li>
+        <li><a href="login.html">SOP Feedback</a></li>
+        <li><a href="login.html">Research Roadmap</a></li>
+        <li><a href="login.html">Language Learning</a></li>
+        <li><a href="login.html">Application Tracker</a></li>
       </ul>
     </div>
     <div>
       <div class="footer-col-title">Resources</div>
       <ul class="footer-links">
-        <li><a href="research-assistant.html">Research Assistant</a></li>
-        <li><a href="university-database.html">University Database</a></li>
-        <li><a href="professor-matching.html">Professor Matching</a></li>
-        <li><a href="career-planner.html">Career Planner</a></li>
-        <li><a href="community.html">Community</a></li>
+        <li><a href="login.html">Research Assistant</a></li>
+        <li><a href="login.html">University Database</a></li>
+        <li><a href="login.html">Professor Matching</a></li>
+        <li><a href="login.html">Career Planner</a></li>
+        <li><a href="login.html">Community</a></li>
       </ul>
     </div>
     <div>
       <div class="footer-col-title">Company</div>
       <ul class="footer-links">
-        <li><a href="about.html">About LumiPath</a></li>
-        <li><a href="philosophy.html">Our philosophy</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="privacy-policy.html">Privacy policy</a></li>
-        <li><a href="terms-of-use.html">Terms of use</a></li>
+        <li><a href="login.html">About LumiPath</a></li>
+        <li><a href="login.html">Our philosophy</a></li>
+        <li><a href="login.html">Contact</a></li>
+        <li><a href="login.html">Privacy policy</a></li>
+        <li><a href="login.html">Terms of use</a></li>
       </ul>
     </div>
   </div>
@@ -1397,19 +1397,8 @@ footer {
     <p class="footer-tagline">"AI should light your path — not walk it for you."</p>
   </div>
 </footer>
-<!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<scrip>
-const supabaseUrl = 'https://vufkaziitvgkzjwcfndt.supabase.co'
-const supabaseKey = 'sb_publishable_Cm89xik8X2OyrTSdQz9Y5A_ft1qdK95'
-
-const supabase = window.supabase.createClient(
-  supabaseUrl,
-  supabaseKey
-)
-
-console.log("Supabase Connected 🚀")
+<script>
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry, i) => {
     if (entry.isIntersecting) {
@@ -1417,14 +1406,12 @@ const observer = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.08 });
-
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
-<
+
 // Stagger children inside grids
 document.querySelectorAll('.features-grid .feat-card, .how-grid .step-card, .systems-grid .sys-card, .journey-grid .journey-card').forEach((el, i) => {
   el.style.transitionDelay = (i * 0.06) + 's';
 });
-</>
+</script>
 </body>
 </html>
