@@ -4,6 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LumiPath — Join Free</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://vufkaziitvgkzjwcfndt.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Cm89xik8X2OyrTSdQz9Y5A_ft1qdK95';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
@@ -235,7 +241,7 @@ select.finput option{background:var(--bg2);color:var(--text);}
         </select>
       </div>
 
-      <button class="btnp" onclick="goQuiz()">Continue → Build your profile</button>
+      <button class="btnp" onclick="signInWithEmail()">Continue → Build your profile</button>
       <p class="fnote">By creating an account you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br/>Already have an account? <a href="#" onclick="go('s-login')">Log in here</a></p>
       <div style="margin-top:0.9rem;"><button class="btnb" onclick="go('s0')">← Back</button></div>
     </div>
@@ -256,7 +262,7 @@ select.finput option{background:var(--bg2);color:var(--text);}
         <div style="margin-top:0.35rem;"><a href="#" style="font-size:0.72rem;color:var(--gold);text-decoration:none;">Forgot your password?</a></div>
       </div>
 
-      <button class="btnp" onclick="doLogin()">Log in to LumiPath →</button>
+      <button class="btnp" onclick="signInWithEmail()">Log in to LumiPath →</button>
       <p class="fnote">Don't have an account? <a href="#" onclick="go('s1')">Create one free →</a></p>
       <div style="margin-top:0.9rem;"><button class="btnb" onclick="go('s0')">← Back</button></div>
 
@@ -267,7 +273,7 @@ select.finput option{background:var(--bg2);color:var(--text);}
     </div>
 
     <!-- ═══ SCREEN 2: QUIZ ═══ -->
-    <div class="screen" id="s-quiz">
+    < class="screen" id="s-quiz">
       <div class="step-tag tag-q">Step 2 of 3 — Build your profile</div>
       <div class="qprog">
         <div class="qtrack"><div class="qfill" id="qfill" style="width:20%"></div></div>
@@ -344,7 +350,7 @@ select.finput option{background:var(--bg2);color:var(--text);}
       </div>
 
       <!-- Q5 -->
-      <div class="qstep" id="q5">
+      < class="qstep" id="q5">
         <div class="qnum">Question 05 — Your main goal</div>
         <div class="qtitle">What is your priority right now?</div>
         <div class="qsub">Shows you the most useful features first when you enter your dashboard.</div>
@@ -355,23 +361,23 @@ select.finput option{background:var(--bg2);color:var(--text);}
           <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🌏</span><div class="qbody"><div class="qt">Prepare for a language test</div><div class="qs">TOPIK, HSK, or IELTS is my focus</div></div></div>
           <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🗺️</span><div class="qbody"><div class="qt">Just exploring for now</div><div class="qs">I want to understand all my options first</div></div></div>
         </div>
-        <div class="qnav"><button class="btnb" onclick="prvQ(5)">← Back</button><button class="btnp" id="nq5" disabled onclick="go('s-done')">Build my profile →</button></div>
+        <div class="qnav"><button class="btnb" onclick="prvQ(5)">← Back</button></div><button class="btnp" id="nq5" onclick="saveStudentProfile())">Build my profile →</button></div>
       </div>
-    </div>
 
     <!-- ═══ SCREEN: DONE ═══ -->
     <div class="screen" id="s-done">
       <div class="done-ico">✨</div>
       <div class="done-title">Welcome to <em>LumiPath!</em></div>
       <p class="done-sub">Your profile is built. We have personalized everything based on your answers — scholarships, roadmap, language planner, and more.</p>
-      <div class="done-list">
+      < class="done-list">
         <div class="ditem"><span class="dchk">✓</span>Scholarship matches personalized to your exact profile</div>
         <div class="ditem"><span class="dchk">✓</span>Research roadmap ready for your specific field</div>
         <div class="ditem"><span class="dchk">✓</span>Language study plan set for your target tests</div>
         <div class="ditem"><span class="dchk">✓</span>Application tracker activated and ready to use</div>
         <div class="ditem"><span class="dchk">✓</span>Honest AI guidance mode — active on all features</div>
-      </div>
-      <button class="btnp" onclick="alert('Dashboard coming in Part 3! 🚀')">Go to my dashboard →</button>
+      <button class="btnp" onclick="window.location.href='dashboard.html'">
+  Go to my dashboard →
+</button>
       <p class="fnote" style="margin-top:1rem;">Remember: LumiPath AI <strong style="color:var(--text);">guides</strong> you — it never writes for you. Your authentic voice wins. 🧭</p>
     </div>
 
@@ -387,7 +393,7 @@ function go(id){
 }
 
 // Google auth
-function gAuth(){alert('Google sign-in will connect to Supabase Auth in the live version.');}
+function signinwithgoogle()){alert('Google sign-in will connect to Supabase Auth in the live version.');}
 
 // Signup → Quiz
 function goQuiz(){
@@ -452,5 +458,130 @@ function updProg(){
   document.getElementById('qlbl').textContent='Question '+cq+' of 5';
 }
 </script>
-</body>
+</div><!-- end of page -->
+
+  <!-- ADD ALL THIS BEFORE </body> -->
+  <script>
+  // ══════════════════════════════════════
+  // SAVE STUDENT PROFILE TO SUPABASE
+  // ══════════════════════════════════════
+  async function saveStudentProfile() {
+
+    // Get the answers from the quiz
+    const profileData = {
+      name:      document.getElementById('inp-name').value.trim(),
+      field:     document.getElementById('inp-field').value.trim(),
+      degree:    document.getElementById('inp-degree').value,
+      country:   document.getElementById('inp-country').value.trim(),
+      target:    document.getElementById('inp-target').value.trim(),
+    };
+
+    // Make sure name is filled in
+    if (!profileData.name) {
+      alert('Please enter your name first.');
+      return;
+    }
+
+    // Check if student is logged in
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      // Not logged in — save to localStorage instead
+      // (works before Supabase login is set up)
+      localStorage.setItem('lumipath_profile', JSON.stringify(profileData));
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    // Student IS logged in — save to real database
+    const { error } = await supabase
+      .from('users')
+      .upsert({
+        id:               user.id,
+        email:            user.email,
+        name:             profileData.name,
+        field_of_study:   profileData.field,
+        degree_level:     profileData.degree,
+        country:          profileData.country,
+        target_countries: profileData.target,
+      });
+
+    if (error) {
+      console.error('Error saving to database:', error);
+      // Even if database fails — save locally and continue
+      localStorage.setItem('lumipath_profile', JSON.stringify(profileData));
+    }
+
+    // Go to dashboard
+    window.location.href = 'dashboard.html';
+  }
+
+  // ══════════════════════════════════════
+  // GOOGLE SIGN IN
+  // ══════════════════════════════════════
+  async function signInWithGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/dashboard.html'
+      }
+    });
+    if (error) console.error('Google sign in error:', error);
+  }
+
+  // ══════════════════════════════════════
+  // EMAIL SIGN UP
+  // ══════════════════════════════════════
+  async function signUpWithEmail() {
+    const email    = document.getElementById('em').value.trim();
+    const password = document.getElementById('pw').value;
+    const name     = document.getElementById('fn').value.trim();
+
+    if (!email || !password || !name) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name } // saves name in auth metadata
+      }
+    });
+
+    if (error) {
+      alert('Sign up error: ' + error.message);
+    } else {
+      // Go to quiz (next step)
+      go('s-quiz');
+    }
+  }
+
+  // ══════════════════════════════════════
+  // EMAIL LOG IN
+  // ══════════════════════════════════════
+  async function signInWithEmail() {
+    const email    = document.getElementById('lem').value.trim();
+    const password = document.getElementById('lpw').value;
+
+    if (!email || !password) {
+      alert('Please enter your email and password.');
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      alert('Login error: ' + error.message);
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  }
+  </script>
+
+  </body>
 </html>
