@@ -1,266 +1,1430 @@
-<!DOCTYPE html>
+=<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LumiPath — Find Honest Scholarships</title>
-  <link rel="stylesheet" href="style.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LumiPath — Your Honest Academic Growth Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:        #080c18;
+  --bg2:       #0f1629;
+  --bg3:       #162040;
+  --gold:      #f0b429;
+  --gold-dim:  rgba(240,180,41,0.12);
+  --gold-border: rgba(240,180,41,0.18);
+  --teal:      #00c9a7;
+  --teal-dim:  rgba(0,201,167,0.1);
+  --blue:      #4f8ef7;
+  --blue-dim:  rgba(79,142,247,0.1);
+  --text:      #eef2ff;
+  --muted:     #7b8cad;
+  --border:    rgba(255,255,255,0.07);
+  --card:      rgba(255,255,255,0.03);
+  --success:   #34d399;
+  --warning:   #fbbf24;
+  --danger:    #f87171;
+  --radius:    12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ══════════════════════════════
+   NAV
+══════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 5rem;
+  background: rgba(8,12,24,0.82);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+.logo-dot {
+  width: 9px; height: 9px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--gold), 0 0 20px rgba(240,180,41,0.4);
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 8px var(--gold), 0 0 16px rgba(240,180,41,0.3); }
+  50%      { box-shadow: 0 0 16px var(--gold), 0 0 32px rgba(240,180,41,0.5); }
+}
+.logo-text {
+  font-family: 'Fraunces', serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.logo-lumi { color: var(--gold); }
+.logo-path { color: var(--text); }
+
+.nav-links {
+  display: flex;
+  gap: 2.2rem;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+
+.nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.55rem 1.2rem;
+  border-radius: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+.btn-gold {
+  background: var(--gold);
+  color: #080c18;
+  border: none;
+  padding: 0.55rem 1.3rem;
+  border-radius: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-gold:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(240,180,41,0.3); }
+
+/* ══════════════════════════════
+   HERO
+══════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 9rem 5rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* background grid lines */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(240,180,41,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240,180,41,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.hero-glow-1 {
+  position: absolute;
+  top: -150px; right: -100px;
+  width: 650px; height: 650px;
+  background: radial-gradient(circle, rgba(240,180,41,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-glow-2 {
+  position: absolute;
+  bottom: -200px; left: -100px;
+  width: 550px; height: 550px;
+  background: radial-gradient(circle, rgba(0,201,167,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-content { position: relative; max-width: 780px; }
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-border);
+  color: var(--gold);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.38rem 1rem;
+  border-radius: 100px;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-pill-dot {
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: glow-pulse 2s ease infinite;
+}
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.8rem, 6.5vw, 5.2rem);
+  font-weight: 900;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero h1 .gold { color: var(--gold); }
+.hero h1 .italic { font-style: italic; color: var(--teal); }
+
+.hero-sub {
+  margin-top: 1.6rem;
+  font-size: 1.08rem;
+  color: var(--muted);
+  max-width: 540px;
+  line-height: 1.75;
+  font-weight: 300;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+
+/* Philosophy callout */
+.hero-philosophy {
+  margin-top: 1.8rem;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  background: var(--teal-dim);
+  border: 1px solid rgba(0,201,167,0.2);
+  border-radius: 10px;
+  padding: 0.9rem 1.2rem;
+  max-width: 520px;
+  animation: fadeUp 0.6s 0.25s ease both;
+}
+.philosophy-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+.philosophy-text {
+  font-size: 0.86rem;
+  color: var(--teal);
+  line-height: 1.6;
+  font-weight: 400;
+}
+.philosophy-text strong { font-weight: 600; color: #fff; }
+
+.hero-actions {
+  margin-top: 2.4rem;
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.btn-primary-lg {
+  background: var(--gold);
+  color: #080c18;
+  border: none;
+  padding: 0.9rem 2.2rem;
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-primary-lg:hover { opacity: 0.88; transform: translateY(-2px); box-shadow: 0 14px 32px rgba(240,180,41,0.28); }
+
+.btn-outline-lg {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.9rem 2rem;
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-outline-lg:hover { border-color: rgba(255,255,255,0.18); background: var(--card); }
+
+.hero-stats {
+  margin-top: 4rem;
+  display: flex;
+  gap: 3.5rem;
+  flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.4s ease both;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+}
+.stat-item { display: flex; flex-direction: column; gap: 0.25rem; }
+.stat-value {
+  font-family: 'Fraunces', serif;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.stat-value sup { color: var(--gold); font-size: 1.1rem; }
+.stat-label { font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════
+   VERIFIED SOURCES STRIP
+══════════════════════════════ */
+.sources-strip {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 1.1rem 5rem;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  overflow: hidden;
+}
+.strip-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.strip-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.strip-items {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.strip-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.83rem;
+  color: var(--muted);
+  white-space: nowrap;
+  font-weight: 400;
+}
+.strip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.dot-gold  { background: var(--gold); }
+.dot-teal  { background: var(--teal); }
+.dot-blue  { background: var(--blue); }
+
+/* ══════════════════════════════
+   SECTION COMMONS
+══════════════════════════════ */
+.section { padding: 6rem 5rem; }
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.9rem;
+}
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  max-width: 580px;
+}
+.section-title em { color: var(--gold); font-style: italic; }
+.section-title .teal { color: var(--teal); }
+.section-sub {
+  margin-top: 1rem;
+  font-size: 0.97rem;
+  color: var(--muted);
+  max-width: 500px;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ══════════════════════════════
+   FEATURES
+══════════════════════════════ */
+.features { background: var(--bg); }
+.features-head { margin-bottom: 3.5rem; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.feat-card {
+  background: var(--bg2);
+  padding: 2.4rem 2.2rem;
+  transition: background 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.feat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background 0.25s;
+}
+.feat-card:hover { background: var(--bg3); }
+.feat-card:hover.gold-accent::before  { background: var(--gold); }
+.feat-card:hover.teal-accent::before  { background: var(--teal); }
+.feat-card:hover.blue-accent::before  { background: var(--blue); }
+
+.feat-icon {
+  width: 46px; height: 46px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 1.4rem;
+}
+.icon-gold   { background: var(--gold-dim); }
+.icon-teal   { background: var(--teal-dim); }
+.icon-blue   { background: var(--blue-dim); }
+
+.feat-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.feat-desc {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+}
+.feat-note {
+  margin-top: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.feat-note::before { content: '→'; color: var(--gold); font-style: normal; }
+
+/* ══════════════════════════════
+   PHILOSOPHY SECTION
+══════════════════════════════ */
+.philosophy-section {
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+.philosophy-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(240,180,41,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.philosophy-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+  position: relative;
+}
+
+.philosophy-quote {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  font-style: italic;
+  color: var(--text);
+}
+.philosophy-quote .gold { color: var(--gold); }
+.philosophy-author {
+  margin-top: 1.5rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+
+.philosophy-cards { display: flex; flex-direction: column; gap: 1rem; }
+.phil-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.phil-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.phil-body {}
+.phil-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+.phil-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* ══════════════════════════════
+   HOW IT WORKS
+══════════════════════════════ */
+.how { background: var(--bg); }
+.how-grid {
+  margin-top: 3.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+.step-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 1.8rem;
+  position: relative;
+  transition: border-color 0.25s;
+}
+.step-card:hover { border-color: var(--gold-border); }
+.step-num {
+  font-family: 'Fraunces', serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--gold-dim);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin-bottom: 1rem;
+}
+.step-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
+}
+.step-desc {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.65;
+  font-weight: 300;
+}
+.step-arrow {
+  position: absolute;
+  top: 2rem; right: -0.75rem;
+  width: 1.5rem; height: 1.5rem;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  transform: rotate(45deg);
+  z-index: 1;
+}
+
+/* ══════════════════════════════
+   TRUST SYSTEM
+══════════════════════════════ */
+.trust { background: var(--bg2); }
+.trust-grid {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+.trust-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.8rem 2rem;
+}
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.85rem;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+  width: fit-content;
+}
+.badge-verified   { background: rgba(52,211,153,0.1);  color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+.badge-partial    { background: rgba(251,191,36,0.1);  color: var(--warning); border: 1px solid rgba(251,191,36,0.25); }
+.badge-ai         { background: rgba(79,142,247,0.1);  color: var(--blue);    border: 1px solid rgba(79,142,247,0.25); }
+.badge-unverified { background: rgba(248,113,113,0.1); color: var(--danger);  border: 1px solid rgba(248,113,113,0.25); }
+.badge-dot { width: 5px; height: 5px; background: currentColor; border-radius: 50%; }
+
+.trust-card-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+.trust-card-desc {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.65;
+  font-weight: 300;
+}
+.trust-honesty {
+  margin-top: 2rem;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--radius);
+  padding: 1.8rem 2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+.honesty-icon { font-size: 1.5rem; flex-shrink: 0; }
+.honesty-text {}
+.honesty-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+}
+.honesty-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.65;
+  font-weight: 300;
+}
+.honesty-quote {
+  margin-top: 0.7rem;
+  padding: 0.7rem 1rem;
+  background: rgba(240,180,41,0.06);
+  border-left: 2px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.84rem;
+  color: var(--gold);
+  font-style: italic;
+}
+
+/* ══════════════════════════════
+   JOURNEY SECTION
+══════════════════════════════ */
+.journey { background: var(--bg); }
+.journey-grid {
+  margin-top: 3.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.journey-card {
+  background: var(--bg2);
+  padding: 2.2rem 2rem;
+  border-right: 1px solid var(--border);
+  transition: background 0.25s;
+}
+.journey-card:last-child { border-right: none; }
+.journey-card:hover { background: var(--bg3); }
+.journey-num {
+  font-family: 'Fraunces', serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.journey-num::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold-border);
+}
+.journey-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
+}
+.journey-desc {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.65;
+  font-weight: 300;
+}
+.journey-tags {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.jtag {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.22rem 0.65rem;
+  border-radius: 100px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+/* ══════════════════════════════
+   AI SYSTEMS PREVIEW
+══════════════════════════════ */
+.ai-systems { background: var(--bg2); }
+.systems-grid {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.sys-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.6rem;
+  transition: all 0.25s;
+  cursor: default;
+}
+.sys-card:hover { border-color: var(--gold-border); transform: translateY(-3px); }
+.sys-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+}
+.sys-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.01em;
+}
+.sys-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* ══════════════════════════════
+   CTA
+══════════════════════════════ */
+.cta {
+  background: var(--bg);
+  text-align: center;
+  padding: 8rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.cta::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 350px;
+  background: radial-gradient(ellipse, rgba(240,180,41,0.09) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-inner { position: relative; }
+.cta h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+.cta h2 em { color: var(--gold); font-style: italic; }
+.cta p {
+  margin-top: 1.3rem;
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 300;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+.cta-actions {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.cta-note {
+  margin-top: 1.5rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.cta-note span { color: var(--teal); }
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 3.5rem 5rem 2.5rem;
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+.footer-brand {}
+.footer-brand-desc {
+  margin-top: 1rem;
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 260px;
+}
+.footer-col-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+}
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 300;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--text); }
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-copy {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 300;
+}
+.footer-copy span { color: var(--gold); }
+.footer-tagline {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+@media (max-width: 1024px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .how-grid { grid-template-columns: repeat(2, 1fr); }
+  .journey-grid { grid-template-columns: repeat(2, 1fr); }
+  .systems-grid { grid-template-columns: repeat(2, 1fr); }
+  .philosophy-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .hero { padding: 7rem 1.5rem 4rem; }
+  .section { padding: 4rem 1.5rem; }
+  .sources-strip { padding: 1rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .features-grid { grid-template-columns: 1fr; }
+  .how-grid { grid-template-columns: 1fr; }
+  .journey-grid { grid-template-columns: 1fr; }
+  .systems-grid { grid-template-columns: 1fr; }
+  .trust-grid { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr; }
+  .cta { padding: 5rem 1.5rem; }
+  footer { padding: 3rem 1.5rem 2rem; }
+  .step-arrow { display: none; }
+}
+</style>
 </head>
 <body>
 
-  <!-- NAVIGATION -->
-  <nav class="navbar">
-    <a href="index.html" class="logo">
-      <span class="logo-dot"></span>
-      <span class="logo-text"><span class="logo-lumi">Lumi</span><span class="logo-path">Path</span></span>
-    </a>
-    <ul class="nav-links">
-      <li><a href="#features">Features</a></li>
-      <li><a href="#how">How it works</a></li>
-      <li><a href="#trust">Trust</a></li>
-      <li><a href="universities.html">Universities</a></li>
-    </ul>
-    <div class="nav-actions">
-      <a href="login.html" class="btn-ghost">Log in</a>
-      <a href="login.html" class="btn-gold">Start Free</a>
-    </div>
-  </nav>
+<!-- ══ NAV ══ -->
+<nav>
+  <a href="index.html" class="logo">
+    <span class="logo-dot"></span>
+    <span class="logo-text">
+      <span class="logo-lumi">Lumi</span><span class="logo-path">Path</span>
+    </span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#trust">Trust</a></li>
+    <li><a href="#journey">Journey</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="signup.html" class="btn-gold">Start Free</a>
+  </div>
+</nav>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <div class="hero-glow-1"></div>
-    <div class="hero-glow-2"></div>
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        Honest AI · Verified Sources · Free to Start
-      </div>
-      <h1 class="hero-title">
-        Find scholarships.<br/>
-        Build <span class="text-gold">real</span> skills.<br/>
-        <span class="text-teal text-italic">Grow on your own.</span>
-      </h1>
-      <p class="hero-sub">
-        LumiPath guides you through scholarships, SOPs, research, and language preparation with honest AI that empowers you — never replaces you.
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-content">
+
+    <div class="hero-pill">
+      <span class="hero-pill-dot"></span>
+      Honest AI · Verified Sources · Free to Start
+    </div>
+
+    <h1>
+      Find scholarships.<br/>
+      Build <span class="gold">real</span> research skills.<br/>
+      <span class="italic">Grow on your own.</span>
+    </h1>
+
+    <p class="hero-sub">
+      LumiPath guides you through scholarships, SOPs, research, biotechnology, and language preparation — with trustworthy AI that empowers you, never replaces you.
+    </p>
+
+    <div class="hero-philosophy">
+      <span class="philosophy-icon">🧭</span>
+      <p class="philosophy-text">
+        <strong>Our promise:</strong> LumiPath AI will never write your SOP, your application, or your research for you. It guides you to write better yourself — because <strong>your authentic voice wins scholarships.</strong>
       </p>
-      <div class="hero-philosophy">
-        <span>🧭</span>
-        <p><strong>Our promise:</strong> LumiPath AI will never write your SOP or application for you. It guides you to write better yourself — because <strong>your authentic voice wins scholarships.</strong></p>
-      </div>
-      <div class="hero-actions">
-        <a href="login.html" class="btn-primary-lg">Start Free →</a>
-        <a href="scholarships.html" class="btn-outline-lg">Find Scholarships</a>
-        <a href="#features" class="btn-outline-lg">See Features</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <span class="stat-value">32<sup>+</sup></span>
-          <span class="stat-label">Verified scholarships</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value">42<sup>+</sup></span>
-          <span class="stat-label">Universities listed</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value">8</span>
-          <span class="stat-label">AI guidance systems</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value">0<sup>$</sup></span>
-          <span class="stat-label">Free to start</span>
-        </div>
-      </div>
     </div>
-  </section>
 
-  <!-- FEATURES SECTION -->
-  <section class="features-section" id="features">
-    <div class="section-header">
-      <p class="section-label">What LumiPath offers</p>
-      <h2 class="section-title">Everything you need to <em>grow academically</em></h2>
-      <p class="section-sub">One honest platform for scholarships, research, language, and application support.</p>
+    <div class="hero-actions">
+      <a href="signup.html" class="btn-primary-lg">Start Free →</a>
+      <a href="#features" class="btn-outline-lg">Explore features</a>
+      <a href="scholarships.html" class="btn-outline-lg">Find scholarships</a>
     </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🎓</div>
-        <h3>Scholarship Finder</h3>
-        <p>32+ verified scholarships across 18 countries. Filter by country, degree, field, and funding type. Every listing verified from official sources.</p>
-        <a href="scholarships.html" class="feature-link">Browse scholarships →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🤖</div>
-        <h3>AI Guidance Chatbot</h3>
-        <p>Ask any scholarship question. AI answers with sources and confidence levels. Always says when it is not sure — never guesses.</p>
-        <a href="dashboard.html" class="feature-link">Try chatbot →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📝</div>
-        <h3>SOP Feedback Tool</h3>
-        <p>Upload your SOP and get section-by-section feedback. AI asks guiding questions — you improve it yourself in your authentic voice.</p>
-        <a href="sop.html" class="feature-link">Analyze SOP →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🧬</div>
-        <h3>Research Roadmap</h3>
-        <p>Personalized learning path for biotechnology, genetics, CRISPR, AMR, and bioinformatics. Step-by-step modules with free resources.</p>
-        <a href="research.html" class="feature-link">Start roadmap →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🌏</div>
-        <h3>Language Learning</h3>
-        <p>Korean (TOPIK), Chinese (HSK), and English (IELTS) preparation focused on scholarship requirements. Daily planners and mock tests.</p>
-        <a href="language.html" class="feature-link">Start learning →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📅</div>
-        <h3>Application Tracker</h3>
-        <p>Track every deadline, document, and requirement in one visual dashboard. Never miss a scholarship deadline again.</p>
-        <a href="tracker.html" class="feature-link">Open tracker →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🏛️</div>
-        <h3>University Database</h3>
-        <p>42+ universities with rankings, research strengths, lab facilities, and scholarship compatibility. Find your perfect research home.</p>
-        <a href="universities.html" class="feature-link">Browse universities →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">👨‍🔬</div>
-        <h3>Professor Matching</h3>
-        <p>Find professors whose research matches your interests. AI matches by keyword — genetics, AMR, CRISPR, bioinformatics.</p>
-        <a href="professors.html" class="feature-link">Find professors →</a>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">💬</div>
-        <h3>Student Experiences</h3>
-        <p>Real stories from students who won GKS, CSC, DAAD, and Chevening scholarships. Honest — including challenges, not just success.</p>
-        <a href="experiences.html" class="feature-link">Read stories →</a>
-      </div>
-    </div>
-  </section>
 
-  <!-- HOW IT WORKS -->
-  <section class="how-section" id="how">
-    <div class="section-header">
-      <p class="section-label">How it works</p>
-      <h2 class="section-title">From zero to <em>scholarship-ready</em></h2>
-    </div>
-    <div class="how-grid">
-      <div class="how-step">
-        <div class="step-num">01</div>
-        <h3>Build your profile</h3>
-        <p>Answer 5 questions about your GPA, field, country, and goals. AI personalizes everything for you instantly.</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-value">500<sup>+</sup></span>
+        <span class="stat-label">Verified scholarships</span>
       </div>
-      <div class="how-step">
-        <div class="step-num">02</div>
-        <h3>Discover scholarships</h3>
-        <p>Browse 32+ verified scholarships matched to your profile. Every listing shows a trust label and competition level.</p>
+      <div class="stat-item">
+        <span class="stat-value">40<sup>+</sup></span>
+        <span class="stat-label">Countries covered</span>
       </div>
-      <div class="how-step">
-        <div class="step-num">03</div>
-        <h3>Prepare your documents</h3>
-        <p>Use SOP Feedback and Research Roadmap. AI guides every step — asking questions, reviewing your own work.</p>
+      <div class="stat-item">
+        <span class="stat-value">8</span>
+        <span class="stat-label">AI guidance systems</span>
       </div>
-      <div class="how-step">
-        <div class="step-num">04</div>
-        <h3>Track and apply</h3>
-        <p>Manage every deadline and document in your Application Tracker. Apply confidently with your authentic profile.</p>
+      <div class="stat-item">
+        <span class="stat-value">0<sup>$</sup></span>
+        <span class="stat-label">Free to get started</span>
       </div>
     </div>
-  </section>
 
-  <!-- TRUST SECTION -->
-  <section class="trust-section" id="trust">
-    <div class="section-header">
-      <p class="section-label">Our trust system</p>
-      <h2 class="section-title">Honest about what we <em>know</em> — and what we don't</h2>
-    </div>
-    <div class="trust-grid">
-      <div class="trust-card verified">
-        <span class="trust-badge badge-verified">✓ Verified</span>
-        <h3>Confirmed from official source</h3>
-        <p>Deadline, eligibility, and coverage confirmed directly from the official government or university portal.</p>
-      </div>
-      <div class="trust-card partial">
-        <span class="trust-badge badge-partial">~ Partially verified</span>
-        <h3>Some details unclear</h3>
-        <p>Scholarship exists on an official page but one or more details could not be fully confirmed. Manual check recommended.</p>
-      </div>
-      <div class="trust-card ai-analysis">
-        <span class="trust-badge badge-ai">🧠 AI Analysis</span>
-        <h3>Generated insight — not a fact</h3>
-        <p>AI-generated based on patterns. Useful as a starting point but must be verified independently before applying.</p>
-      </div>
-      <div class="trust-card unverified">
-        <span class="trust-badge badge-unverified">! Unverified</span>
-        <h3>Could not confirm</h3>
-        <p>No reliable source found. Do not rely on this for application decisions. Use it only as a lead for your own research.</p>
-      </div>
-    </div>
-    <div class="honesty-box">
-      <span class="honesty-icon">🤝</span>
-      <div>
-        <h3>The LumiPath AI honesty rule</h3>
-        <p>If AI is not sure, it says so clearly. It will never hallucinate scholarship deadlines or present guesses as facts.</p>
-        <blockquote>"I could not verify this information. Please check the official source before making any application decisions."</blockquote>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <!-- CTA SECTION -->
-  <section class="cta-section">
-    <div class="cta-glow"></div>
-    <h2>Start your scholarship journey<br/><em>with honest guidance</em></h2>
-    <p>Free to use. No credit card. AI that guides — never writes for you.</p>
+<!-- ══ SOURCES STRIP ══ -->
+<div class="sources-strip">
+  <span class="strip-label">Official sources only</span>
+  <div class="strip-divider"></div>
+  <div class="strip-items">
+    <span class="strip-item"><span class="strip-dot dot-gold"></span>Korean GKS Scholarship</span>
+    <span class="strip-item"><span class="strip-dot dot-teal"></span>Chinese CSC Scholarship</span>
+    <span class="strip-item"><span class="strip-dot dot-blue"></span>Erasmus+ Programme</span>
+    <span class="strip-item"><span class="strip-dot dot-gold"></span>DAAD Germany</span>
+    <span class="strip-item"><span class="strip-dot dot-teal"></span>Fulbright Program</span>
+    <span class="strip-item"><span class="strip-dot dot-blue"></span>Commonwealth Scholarships</span>
+    <span class="strip-item"><span class="strip-dot dot-gold"></span>MEXT Japan</span>
+    <span class="strip-item"><span class="strip-dot dot-teal"></span>Chevening UK</span>
+  </div>
+</div>
+
+<!-- ══ FEATURES ══ -->
+<section class="section features" id="features">
+  <div class="features-head reveal">
+    <p class="section-label">What LumiPath offers</p>
+    <h2 class="section-title">Everything you need to <em>grow academically</em></h2>
+    <p class="section-sub">One honest platform for scholarships, research, language, and application support.</p>
+  </div>
+
+  <div class="features-grid reveal">
+
+    <div class="feat-card gold-accent">
+      <div class="feat-icon icon-gold">🎓</div>
+      <div class="feat-title">Scholarship Finder</div>
+      <div class="feat-desc">Filter by country, degree, field, GPA, language, and funding type. Every listing verified against official government and university sources with a clear trust label.</div>
+      <div class="feat-note">Only official sources — no blogs, no guesses</div>
+    </div>
+
+    <div class="feat-card teal-accent">
+      <div class="feat-icon icon-teal">🤖</div>
+      <div class="feat-title">AI Guidance Chatbot</div>
+      <div class="feat-desc">Ask scholarship questions and get evidence-backed answers. AI always shows its source, its confidence level, and what it could not verify — never pretends to know everything.</div>
+      <div class="feat-note">AI shows uncertainty clearly — always</div>
+    </div>
+
+    <div class="feat-card blue-accent">
+      <div class="feat-icon icon-blue">📝</div>
+      <div class="feat-title">SOP Feedback Tool</div>
+      <div class="feat-desc">Upload your SOP and get specific guidance — not a rewrite. AI points to weak sections and asks you guiding questions so you improve it yourself in your own authentic voice.</div>
+      <div class="feat-note">AI guides — you write. Always.</div>
+    </div>
+
+    <div class="feat-card teal-accent">
+      <div class="feat-icon icon-teal">🧬</div>
+      <div class="feat-title">Research Roadmap</div>
+      <div class="feat-desc">AI builds a personalized learning path for your field — genetics, biotech, AI, neuroscience, and more. Free courses, books, projects, and certifications mapped to your goals.</div>
+      <div class="feat-note">Your field, your pace, your growth</div>
+    </div>
+
+    <div class="feat-card gold-accent">
+      <div class="feat-icon icon-gold">🌏</div>
+      <div class="feat-title">Language Preparation</div>
+      <div class="feat-desc">Korean (TOPIK), Chinese (HSK), and English (IELTS) preparation focused on scholarship applications. Daily planners, vocabulary tracking, AI grammar hints, and mock tests.</div>
+      <div class="feat-note">Application-focused — not just conversation</div>
+    </div>
+
+    <div class="feat-card blue-accent">
+      <div class="feat-icon icon-blue">📅</div>
+      <div class="feat-title">Application Tracker</div>
+      <div class="feat-desc">Track every deadline, document, professor email, and visa requirement in one visual dashboard. Color-coded urgency. Never miss a deadline again.</div>
+      <div class="feat-note">Green · Yellow · Red — always know your status</div>
+    </div>
+
+    <div class="feat-card gold-accent">
+      <div class="feat-icon icon-gold">🏛️</div>
+      <div class="feat-title">University Database</div>
+      <div class="feat-desc">Explore universities by research strength, lab focus, professor specialties, and scholarship compatibility. AI helps match your profile with the right institutions.</div>
+      <div class="feat-note">Research fit over rankings alone</div>
+    </div>
+
+    <div class="feat-card teal-accent">
+      <div class="feat-icon icon-teal">🔬</div>
+      <div class="feat-title">Research Assistant</div>
+      <div class="feat-desc">Understand complex science simply. Disease explainer, mutation explorer, CRISPR guide, and paper simplifier — built for students entering research for the first time.</div>
+      <div class="feat-note">Science made accessible — not dumbed down</div>
+    </div>
+
+    <div class="feat-card blue-accent">
+      <div class="feat-icon icon-blue">🎯</div>
+      <div class="feat-title">Career Planner</div>
+      <div class="feat-desc">Explore career paths, salaries, future demand, PhD pathways, and global opportunities in your field. AI maps your current profile to realistic future directions.</div>
+      <div class="feat-note">Realistic paths — not false promises</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ PHILOSOPHY ══ -->
+<section class="section philosophy-section" id="about">
+  <div class="philosophy-inner reveal">
+    <div>
+      <p class="section-label">Our philosophy</p>
+      <div class="philosophy-quote">
+        "AI should light your path — <span class="gold">not walk it for you.</span>"
+      </div>
+      <p class="philosophy-author">— The LumiPath principle</p>
+      <p class="section-sub" style="margin-top:1.5rem;">
+        Every feature on LumiPath is designed with one rule: the student does the real work. AI is your mentor, your feedback system, your guide — never your ghostwriter.
+      </p>
+    </div>
+
+    <div class="philosophy-cards">
+      <div class="phil-card">
+        <span class="phil-icon">✍️</span>
+        <div class="phil-body">
+          <div class="phil-title">You write. AI gives feedback.</div>
+          <div class="phil-desc">SOP Analyzer points out weak sections and asks guiding questions. You improve it yourself. Your authentic voice is what wins scholarships.</div>
+        </div>
+      </div>
+      <div class="phil-card">
+        <span class="phil-icon">🧠</span>
+        <div class="phil-body">
+          <div class="phil-title">You learn. AI structures the path.</div>
+          <div class="phil-desc">Research Roadmap shows you what to study and in what order. You follow the path yourself, building real knowledge that lasts.</div>
+        </div>
+      </div>
+      <div class="phil-card">
+        <span class="phil-icon">🔍</span>
+        <div class="phil-body">
+          <div class="phil-title">You decide. AI gives verified information.</div>
+          <div class="phil-desc">Every scholarship question is answered with sources and confidence levels. You make the final decision — always informed, never misled.</div>
+        </div>
+      </div>
+      <div class="phil-card">
+        <span class="phil-icon">🌱</span>
+        <div class="phil-body">
+          <div class="phil-title">Short help. Long growth.</div>
+          <div class="phil-desc">LumiPath is designed so students need it less over time — not more. Real growth means becoming independent, not dependent on any tool.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="section how" id="how">
+  <div class="reveal">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">From first visit to <em>scholarship win</em></h2>
+    <p class="section-sub">A clear, honest process designed for students at every stage of their journey.</p>
+  </div>
+  <div class="how-grid reveal">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-title">Build your profile</div>
+      <div class="step-desc">Answer 5 quick questions about your GPA, field, country, research interests, and language level. AI personalizes all recommendations from this.</div>
+      <div class="step-arrow"></div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-title">Discover verified scholarships</div>
+      <div class="step-desc">Browse scholarships matched to your profile. Every listing shows a trust label — Verified, Partial, or Unverified. Official links only.</div>
+      <div class="step-arrow"></div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-title">Prepare with guidance</div>
+      <div class="step-desc">Use SOP Feedback, Research Roadmap, and Language Planner. AI guides every step — asking questions, giving hints, reviewing your own work.</div>
+      <div class="step-arrow"></div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <div class="step-title">Track and apply</div>
+      <div class="step-desc">Manage every deadline, document, and email in your Application Tracker. Apply confidently with your authentic profile and voice.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TRUST SYSTEM ══ -->
+<section class="section trust" id="trust">
+  <div class="reveal">
+    <p class="section-label">Our trust system</p>
+    <h2 class="section-title">Honest about what we <em>know</em> — and what we don't</h2>
+    <p class="section-sub">Every piece of information on LumiPath carries a trust label. No platform does this — we do, because students deserve honesty.</p>
+  </div>
+
+  <div class="trust-grid reveal">
+    <div class="trust-card">
+      <span class="trust-badge badge-verified"><span class="badge-dot"></span>Verified</span>
+      <div class="trust-card-title">Confirmed from official source</div>
+      <div class="trust-card-desc">This scholarship's deadline, eligibility, and coverage were confirmed directly from the official government or university portal. Safe to rely on — always double-check before applying.</div>
+    </div>
+    <div class="trust-card">
+      <span class="trust-badge badge-partial"><span class="badge-dot"></span>Partially verified</span>
+      <div class="trust-card-title">Some details unclear</div>
+      <div class="trust-card-desc">The scholarship exists and was found on an official page, but one or more details — like the deadline or coverage — could not be fully confirmed. Manual verification recommended.</div>
+    </div>
+    <div class="trust-card">
+      <span class="trust-badge badge-ai"><span class="badge-dot"></span>AI analysis</span>
+      <div class="trust-card-title">Generated insight — not a fact</div>
+      <div class="trust-card-desc">This response was generated by AI based on patterns and known information. It may be useful as a starting point but must not be treated as confirmed data. Always verify independently.</div>
+    </div>
+    <div class="trust-card">
+      <span class="trust-badge badge-unverified"><span class="badge-dot"></span>Unverified</span>
+      <div class="trust-card-title">AI could not confirm this</div>
+      <div class="trust-card-desc">No reliable source was found to confirm this information. Do not rely on this entry for application decisions. Use it only as a lead for your own further research.</div>
+    </div>
+  </div>
+
+  <div class="trust-honesty reveal">
+    <span class="honesty-icon">🤝</span>
+    <div class="honesty-text">
+      <div class="honesty-title">The LumiPath AI honesty rule</div>
+      <div class="honesty-desc">Our AI is trained with one strict rule: if it is not sure, it must say so clearly. It will never hallucinate scholarship deadlines, invent eligibility rules, or present guesses as facts.</div>
+      <div class="honesty-quote">"I could not verify this information. Please check the official source before making any application decisions."</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ JOURNEY ══ -->
+<section class="section journey" id="journey">
+  <div class="reveal">
+    <p class="section-label">Your academic journey</p>
+    <h2 class="section-title">LumiPath grows <em>with you</em></h2>
+    <p class="section-sub">From your first scholarship search to building a full research profile — one platform for your entire academic growth.</p>
+  </div>
+  <div class="journey-grid reveal">
+    <div class="journey-card">
+      <div class="journey-num">Stage 01</div>
+      <div class="journey-title">Learn & explore</div>
+      <div class="journey-desc">Discover your field, understand research areas, and explore scholarship landscapes. Build foundational knowledge before anything else.</div>
+      <div class="journey-tags">
+        <span class="jtag">Research Roadmap</span>
+        <span class="jtag">Research Assistant</span>
+      </div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-num">Stage 02</div>
+      <div class="journey-title">Build your profile</div>
+      <div class="journey-desc">Strengthen your GPA narrative, build a research profile, improve language scores, and collect the right documents for applications.</div>
+      <div class="journey-tags">
+        <span class="jtag">Language Learning</span>
+        <span class="jtag">Project Builder</span>
+        <span class="jtag">Career Planner</span>
+      </div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-num">Stage 03</div>
+      <div class="journey-title">Apply with confidence</div>
+      <div class="journey-desc">Find verified scholarships, write your own powerful SOP with AI guidance, and track every deadline and document in one place.</div>
+      <div class="journey-tags">
+        <span class="jtag">Scholarship Finder</span>
+        <span class="jtag">SOP Feedback</span>
+        <span class="jtag">App Tracker</span>
+      </div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-num">Stage 04</div>
+      <div class="journey-title">Grow & connect</div>
+      <div class="journey-desc">Find professors aligned with your research interests, connect with labs, and build toward a graduate research career — globally.</div>
+      <div class="journey-tags">
+        <span class="jtag">Professor Matching</span>
+        <span class="jtag">University DB</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ AI SYSTEMS ══ -->
+<section class="section ai-systems">
+  <div class="reveal">
+    <p class="section-label">AI systems inside LumiPath</p>
+    <h2 class="section-title">8 AI modules — each with a <span class="teal">specific purpose</span></h2>
+    <p class="section-sub">No single AI does everything. Each module is built for one job — and does it honestly.</p>
+  </div>
+  <div class="systems-grid reveal">
+    <div class="sys-card">
+      <div class="sys-tag">Module 01</div>
+      <div class="sys-name">Scholarship AI</div>
+      <div class="sys-desc">Matches scholarships to your profile with a percentage fit score based on your GPA, field, country, and language level.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-tag">Module 02</div>
+      <div class="sys-name">SOP Feedback AI</div>
+      <div class="sys-desc">Reads your SOP and gives section-by-section guidance. Never rewrites. Always asks you to improve it yourself.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-tag">Module 03</div>
+      <div class="sys-name">Research AI</div>
+      <div class="sys-desc">Explains complex science simply. Summarizes papers. Helps students understand research without replacing the learning process.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-tag">Module 04</div>
+      <div class="sys-name">Roadmap AI</div>
+      <div class="sys-desc">Generates personalized learning paths for any academic field with courses, books, projects, and milestones.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-tag">Module 05</div>
+      <div class="sys-name">Language AI</div>
+      <div class="sys-desc">Provides grammar hints, vocabulary feedback, and study plans for TOPIK, HSK, and IELTS — always in a guidance mode.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-tag">Module 06</div>
+      <div class="sys-name">Professor AI</div>
+      <div class="sys-desc">Matches your research interests to professors and labs globally based on keyword alignment and publication focus.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-tag">Module 07</div>
+      <div class="sys-name">Trust AI</div>
+      <div class="sys-desc">Verifies scholarship information against official sources and labels every entry with a trust score before showing it to users.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-tag">Module 08</div>
+      <div class="sys-name">Career AI</div>
+      <div class="sys-desc">Maps your current academic profile to realistic career paths, salary ranges, and future demand in your field.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta">
+  <div class="cta-inner reveal">
+    <h2>Your path to a scholarship<br/>starts with <em>honest guidance.</em></h2>
+    <p>Free to start. No credit card. AI that guides you — never writes for you. Your authentic voice, your real growth.</p>
     <div class="cta-actions">
       <a href="login.html" class="btn-primary-lg">Create free account →</a>
-      <a href="scholarships.html" class="btn-outline-lg">Browse scholarships</a>
+      <a href="signup.html" class="btn-outline-lg">Browse scholarships</a>
     </div>
-  </section>
+    <p class="cta-note">
+      <span>✓ Verified sources</span> &nbsp;·&nbsp;
+      <span>✓ Honest AI</span> &nbsp;·&nbsp;
+      <span>✓ Your voice, your work</span>
+    </p>
+  </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <a href="index.html" class="logo">
-          <span class="logo-dot"></span>
-          <span class="logo-text"><span class="logo-lumi">Lumi</span><span class="logo-path">Path</span></span>
-        </a>
-        <p>Trustworthy AI academic companion for students seeking scholarships and research opportunities worldwide.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Platform</h4>
-        <ul>
-          <li><a href="scholarships.html">Scholarship Finder</a></li>
-          <li><a href="sop.html">SOP Feedback</a></li>
-          <li><a href="research.html">Research Roadmap</a></li>
-          <li><a href="language.html">Language Learning</a></li>
-          <li><a href="tracker.html">Application Tracker</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Discover</h4>
-        <ul>
-          <li><a href="universities.html">Universities</a></li>
-          <li><a href="professors.html">Professors</a></li>
-          <li><a href="experiences.html">Student Stories</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="#">About LumiPath</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Use</a></li>
-        </ul>
-      </div>
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">
+          <span class="logo-lumi">Lumi</span><span class="logo-path">Path</span>
+        </span>
+      </a>
+      <p class="footer-brand-desc">Trustworthy AI academic companion for students seeking scholarships, research opportunities, and genuine academic growth.</p>
     </div>
-    <div class="footer-bottom">
-      <p>© 2026 LumiPath. Built with honesty for students worldwide.</p>
-      <p class="footer-quote">"AI should light your path — not walk it for you."</p>
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <ul class="footer-links">
+        <li><a href="scholarships.html">Scholarship Finder</a></li>
+        <li><a href="sop-feedback.html">SOP Feedback</a></li>
+        <li><a href="research-roadmap.html">Research Roadmap</a></li>
+        <li><a href="language-learning.html">Language Learning</a></li>
+        <li><a href="application-tracker.html">Application Tracker</a></li>
+      </ul>
     </div>
-  </footer>
+    <div>
+      <div class="footer-col-title">Resources</div>
+      <ul class="footer-links">
+        <li><a href="research-assistant.html">Research Assistant</a></li>
+        <li><a href="university-database.html">University Database</a></li>
+        <li><a href="professor-matching.html">Professor Matching</a></li>
+        <li><a href="career-planner.html">Career Planner</a></li>
+        <li><a href="community.html">Community</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About LumiPath</a></li>
+        <li><a href="philosophy.html">Our philosophy</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="privacy-policy.html">Privacy policy</a></li>
+        <li><a href="terms-of-use.html">Terms of use</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 <span>LumiPath</span>. Built with honesty for students worldwide.</p>
+    <p class="footer-tagline">"AI should light your path — not walk it for you."</p>
+  </div>
+</footer>
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<scrip>
+const supabaseUrl = 'https://vufkaziitvgkzjwcfndt.supabase.co'
+const supabaseKey = 'sb_publishable_Cm89xik8X2OyrTSdQz9Y5A_ft1qdK95'
+
+const supabase = window.supabase.createClient(
+  supabaseUrl,
+  supabaseKey
+)
+
+console.log("Supabase Connected 🚀")
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 60);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+<
+// Stagger children inside grids
+document.querySelectorAll('.features-grid .feat-card, .how-grid .step-card, .systems-grid .sys-card, .journey-grid .journey-card').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.06) + 's';
+});
+</>
 </body>
 </html>
