@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LumiPath — Dashboard</title>
+<script src="https://vufkaziitvgkzjwcfndt.supabase.co"></script>
+<script>
+  const SUPABASE_URL = 'https://vufkaziitvgkzjwcfndt.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Cm89xik8X2OyrTSdQz9Y5A_ft1qdK95';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#080c18;--bg2:#0f1629;--bg3:#162040;
+  --gold:#f0b429;--gold-dim:rgba(240,180,41,0.11);--gold-bdr:rgba(240,180,41,0.22);
+  --teal:#00c9a7;--teal-dim:rgba(0,201,167,0.1);--teal-bdr:rgba(0,201,167,0.18);
+  --blue:#4f8ef7;--blue-dim:rgba(79,142,247,0.1);--blue-bdr:rgba(79,142,247,0.2);
+  --purple:#a78bfa;--purple-dim:rgba(167,139,250,0.1);
+  --text:#eef2ff;--muted:#7b8cad;--muted2:#4a5a75;
+  --border:rgba(255,255,255,0.07);--card:rgba(255,255,255,0.03);
+  --success:#34d399;--danger:#f87171;--warning:#fbbf24;
+  --sidebar:240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;line-height:1.6;font-size:14px;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;overflow-y:auto;}
+.sidebar::-webkit-scrollbar{width:0;}
+.sb-logo{display:flex;align-items:center;gap:0.5rem;padding:1.3rem 1.4rem;border-bottom:1px solid var(--border);text-decoration:none;}
+.sb-dot{width:9px;height:9px;background:var(--gold);border-radius:50%;box-shadow:0 0 10px var(--gold);animation:glow 2.5s ease-in-out infinite;flex-shrink:0;}
+@keyframes glow{0%,100%{box-shadow:0 0 6px var(--gold);}50%{box-shadow:0 0 18px var(--gold),0 0 32px rgba(240,180,41,0.5);}}
+.sb-logo-text{font-family:'Fraunces',serif;font-size:1.28rem;font-weight:700;}
+.sl{color:var(--gold);}.sp{color:var(--text);}
+
+/* Profile card in sidebar */
+.sb-profile{margin:0.8rem;border-radius:10px;background:var(--gold-dim);border:1px solid var(--gold-bdr);padding:1rem;}
+.sb-profile-top{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.7rem;}
+.sb-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--teal));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:1rem;font-weight:700;color:#080c18;flex-shrink:0;cursor:pointer;transition:transform 0.2s;}
+.sb-av:hover{transform:scale(1.08);}
+.sb-name{font-size:0.85rem;font-weight:600;color:var(--text);}
+.sb-role{font-size:0.71rem;color:var(--muted);font-weight:300;}
+.sb-edit{font-size:0.69rem;color:var(--gold);cursor:pointer;margin-top:0.15rem;}
+.sb-edit:hover{text-decoration:underline;}
+.sb-prog-label{font-size:0.67rem;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:0.22rem;}
+.sb-prog-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.sb-prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--teal));border-radius:2px;transition:width 0.5s ease;}
+
+.sb-sec{font-size:0.61rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted2);padding:1.1rem 1.4rem 0.38rem;}
+.sb-nav{list-style:none;padding:0 0.65rem;}
+.sb-nav li{margin-bottom:1px;}
+.sb-a{display:flex;align-items:center;gap:0.72rem;padding:0.6rem 0.78rem;border-radius:8px;text-decoration:none;color:var(--muted);font-size:0.82rem;transition:all 0.18s;position:relative;}
+.sb-a:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.sb-a.act{background:var(--gold-dim);color:var(--gold);}
+.sb-a.act::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:55%;background:var(--gold);border-radius:0 3px 3px 0;}
+.sb-ic{font-size:0.93rem;width:18px;text-align:center;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--gold);color:#080c18;font-size:0.59rem;font-weight:700;padding:0.09rem 0.4rem;border-radius:100px;}
+.sb-badge.teal{background:var(--teal);}
+
+/* ══ MAIN ══ */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:90;background:rgba(8,12,24,0.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0.8rem 2rem;}
+.tb-greet{font-family:'Fraunces',serif;font-size:0.98rem;font-weight:700;letter-spacing:-0.01em;}
+.tb-greet span{color:var(--gold);font-style:italic;}
+.tb-date{font-size:0.7rem;color:var(--muted);font-weight:300;margin-top:0.02rem;}
+.tb-right{display:flex;align-items:center;gap:0.75rem;}
+.tb-search{background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.81rem;padding:0.46rem 0.88rem;outline:none;transition:all 0.2s;width:175px;}
+.tb-search::placeholder{color:rgba(123,140,173,0.5);}
+.tb-search:focus{border-color:var(--gold-bdr);width:210px;}
+.tb-icon{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:0.46rem 0.72rem;border-radius:8px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;position:relative;}
+.tb-icon:hover{color:var(--text);}
+.notif-dot{position:absolute;top:-2px;right:-2px;width:7px;height:7px;background:var(--gold);border-radius:50%;border:2px solid var(--bg);}
+.tb-gold{background:var(--gold);color:#080c18;border:none;border-radius:8px;padding:0.46rem 1.05rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.81rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.tb-gold:hover{opacity:0.88;transform:translateY(-1px);}
+
+/* ══ CONTENT ══ */
+.content{padding:1.6rem 2rem;flex:1;}
+
+/* AI BANNER */
+.ai-banner{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--gold-bdr);border-radius:12px;padding:1.2rem 1.6rem;display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.6rem;position:relative;overflow:hidden;}
+.ai-banner::after{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;background:radial-gradient(circle,rgba(240,180,41,0.1) 0%,transparent 65%);pointer-events:none;}
+.ai-banner-icon{font-size:1.6rem;flex-shrink:0;}
+.ai-body{flex:1;position:relative;}
+.ai-label{font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.28rem;}
+.ai-msg{font-size:0.88rem;color:var(--text);line-height:1.65;font-weight:300;}
+.ai-msg strong{color:var(--gold);font-weight:600;}
+.ai-note{margin-top:0.5rem;font-size:0.74rem;color:var(--muted);font-style:italic;}
+.ai-close{background:transparent;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;transition:color 0.2s;flex-shrink:0;}
+.ai-close:hover{color:var(--text);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.9rem;margin-bottom:1.6rem;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:1.1rem 1.3rem;transition:border-color 0.2s;position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background 0.2s;}
+.stat:hover{border-color:var(--gold-bdr);}
+.stat:hover::before{background:linear-gradient(90deg,var(--gold),var(--teal));}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;}
+.stat-ico{font-size:1rem;}
+.stat-chip{font-size:0.68rem;font-weight:500;padding:0.13rem 0.45rem;border-radius:100px;}
+.chip-up{background:rgba(52,211,153,0.1);color:var(--success);}
+.chip-warn{background:rgba(251,191,36,0.1);color:var(--warning);}
+.chip-info{background:var(--blue-dim);color:var(--blue);}
+.stat-val{font-family:'Fraunces',serif;font-size:1.85rem;font-weight:700;letter-spacing:-0.03em;line-height:1;margin-bottom:0.18rem;}
+.stat-val sup{color:var(--gold);font-size:0.95rem;}
+.stat-lbl{font-size:0.74rem;color:var(--muted);font-weight:300;}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.1rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.1rem;margin-bottom:1.1rem;}
+.col-span-2{grid-column:span 2;}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.3rem;border-bottom:1px solid var(--border);}
+.ch-left{display:flex;align-items:center;gap:0.55rem;}
+.ch-icon{font-size:0.95rem;}
+.ch-title{font-family:'Fraunces',serif;font-size:0.98rem;font-weight:700;letter-spacing:-0.01em;}
+.ch-badge{font-size:0.64rem;font-weight:600;padding:0.16rem 0.5rem;border-radius:100px;background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-bdr);}
+.ch-badge.teal{background:var(--teal-dim);color:var(--teal);border-color:var(--teal-bdr);}
+.ch-badge.blue{background:var(--blue-dim);color:var(--blue);border-color:var(--blue-bdr);}
+.ch-link{font-size:0.75rem;color:var(--gold);text-decoration:none;transition:opacity 0.2s;}
+.ch-link:hover{opacity:0.72;}
+.card-body{padding:1.1rem 1.3rem;}
+
+/* ══ TABS ══ */
+.tabs{display:flex;background:var(--bg3);border-bottom:1px solid var(--border);overflow-x:auto;}
+.tabs::-webkit-scrollbar{height:0;}
+.tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:500;padding:0.65rem 1rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(240,180,41,0.04);}
+.tab-btn.active.teal-tab{color:var(--teal);border-bottom-color:var(--teal);background:rgba(0,201,167,0.04);}
+
+/* TAB PANELS */
+.tab-panel{display:none;padding:1rem 1.2rem;animation:fadeIn 0.25s ease;}
+.tab-panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══ SCHOLARSHIP ITEMS ══ */
+.schol-list{display:flex;flex-direction:column;gap:0.65rem;}
+.schol-item{display:flex;align-items:center;gap:0.82rem;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:0.82rem 0.95rem;transition:all 0.2s;cursor:pointer;}
+.schol-item:hover{border-color:var(--gold-bdr);background:var(--gold-dim);}
+.si-flag{font-size:1.5rem;flex-shrink:0;}
+.si-body{flex:1;}
+.si-name{font-size:0.84rem;font-weight:600;color:var(--text);margin-bottom:0.1rem;}
+.si-meta{font-size:0.7rem;color:var(--muted);font-weight:300;margin-bottom:0.3rem;}
+.si-tags{display:flex;gap:0.28rem;flex-wrap:wrap;}
+.si-tag{font-size:0.62rem;font-weight:600;padding:0.12rem 0.46rem;border-radius:100px;}
+.tag-v{background:rgba(52,211,153,0.1);color:var(--success);border:1px solid rgba(52,211,153,0.2);}
+.tag-f{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-bdr);}
+.tag-p{background:rgba(251,191,36,0.1);color:var(--warning);border:1px solid rgba(251,191,36,0.2);}
+.tag-h{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(167,139,250,0.2);}
+.tag-b{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-bdr);}
+.si-right{flex-shrink:0;text-align:right;}
+.si-match{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;color:var(--gold);}
+.si-match-lbl{font-size:0.6rem;color:var(--muted);font-weight:300;}
+.si-dl{font-size:0.68rem;color:var(--muted);margin-top:0.18rem;white-space:nowrap;}
+.dl-u{color:var(--danger);font-weight:600;}
+.dl-s{color:var(--warning);font-weight:600;}
+.dl-ok{color:var(--success);font-weight:600;}
+
+/* hidden gem note */
+.hidden-note{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.2);border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:0.85rem;font-size:0.75rem;color:var(--purple);line-height:1.5;}
+.hidden-note strong{color:#fff;}
+
+/* ══ UNIVERSITY ITEMS ══ */
+.uni-list{display:flex;flex-direction:column;gap:0.6rem;}
+.uni-item{display:flex;align-items:center;gap:0.78rem;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:0.78rem 0.92rem;transition:all 0.2s;cursor:pointer;}
+.uni-item:hover{border-color:var(--teal-bdr);background:var(--teal-dim);}
+.ui-flag{font-size:1.3rem;flex-shrink:0;}
+.ui-body{flex:1;}
+.ui-name{font-size:0.83rem;font-weight:600;color:var(--text);margin-bottom:0.08rem;}
+.ui-loc{font-size:0.69rem;color:var(--muted);font-weight:300;margin-bottom:0.28rem;}
+.ui-tags{display:flex;gap:0.28rem;flex-wrap:wrap;}
+.ui-tag{font-size:0.62rem;padding:0.11rem 0.44rem;border-radius:100px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-bdr);}
+.ui-rank{flex-shrink:0;text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:0.38rem 0.58rem;min-width:52px;}
+.ui-rank-num{font-family:'Fraunces',serif;font-size:0.9rem;font-weight:700;color:var(--text);line-height:1;}
+.ui-rank-lbl{font-size:0.58rem;color:var(--muted);font-weight:300;}
+
+/* ══ TRACKER ══ */
+.track-list{display:flex;flex-direction:column;gap:0.62rem;}
+.track-item{display:flex;align-items:center;gap:0.78rem;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:0.82rem 0.95rem;transition:border-color 0.2s;}
+.track-item:hover{border-color:rgba(255,255,255,0.12);}
+.ts{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.ts-r{background:var(--danger);box-shadow:0 0 6px rgba(248,113,113,0.6);}
+.ts-y{background:var(--warning);box-shadow:0 0 6px rgba(251,191,36,0.6);}
+.ts-g{background:var(--success);box-shadow:0 0 6px rgba(52,211,153,0.6);}
+.tr-body{flex:1;}
+.tr-name{font-size:0.83rem;font-weight:500;color:var(--text);}
+.tr-meta{font-size:0.7rem;color:var(--muted);font-weight:300;margin-top:0.06rem;}
+.tr-right{text-align:right;flex-shrink:0;}
+.tr-dl{font-size:0.74rem;font-weight:600;color:var(--text);}
+.tr-days{font-size:0.67rem;color:var(--muted);font-weight:300;margin-top:0.04rem;}
+.tr-days.urg{color:var(--danger);}
+.tr-days.soon{color:var(--warning);}
+.add-btn{display:flex;align-items:center;justify-content:center;gap:0.5rem;border:1px dashed rgba(255,255,255,0.1);border-radius:9px;padding:0.7rem;cursor:pointer;font-size:0.8rem;color:var(--muted);background:transparent;width:100%;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;margin-top:0.3rem;}
+.add-btn:hover{border-color:var(--gold-bdr);color:var(--gold);}
+
+/* ══ LANGUAGE PROGRESS ══ */
+.lang-list{display:flex;flex-direction:column;gap:0.72rem;}
+.lang-item{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:0.85rem 0.95rem;transition:border-color 0.2s;}
+.lang-item:hover{border-color:var(--gold-bdr);}
+.li-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;}
+.li-left{display:flex;align-items:center;gap:0.55rem;}
+.li-flag{font-size:1.15rem;}
+.li-name{font-size:0.83rem;font-weight:600;color:var(--text);}
+.li-test{font-size:0.68rem;color:var(--muted);font-weight:300;}
+.li-pct{font-family:'Fraunces',serif;font-size:1rem;font-weight:700;color:var(--gold);}
+.li-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.lb-ko{background:linear-gradient(90deg,var(--teal),var(--blue));}
+.lb-zh{background:linear-gradient(90deg,var(--gold),#f97316);}
+.lb-en{background:linear-gradient(90deg,var(--blue),var(--purple));}
+.lang-study-btn{margin-top:0.8rem;width:100%;background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);border-radius:8px;padding:0.6rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;display:block;text-align:center;}
+.lang-study-btn:hover{background:var(--gold);color:#080c18;}
+
+/* ══ ROADMAP ══ */
+.rm-list{display:flex;flex-direction:column;gap:0.62rem;}
+.rm-item{display:flex;align-items:center;gap:0.75rem;}
+.rm-circle{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.73rem;font-weight:700;flex-shrink:0;}
+.rc-done{background:var(--success);color:#080c18;}
+.rc-active{background:var(--gold);color:#080c18;box-shadow:0 0 12px rgba(240,180,41,0.4);}
+.rc-locked{background:var(--bg3);border:1px solid var(--border);color:var(--muted);}
+.rm-body{flex:1;}
+.rm-title{font-size:0.82rem;font-weight:500;color:var(--text);}
+.rm-sub{font-size:0.69rem;color:var(--muted);font-weight:300;}
+.rm-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:0.28rem;}
+.rb-done{background:var(--success);}
+.rb-active{background:var(--gold);}
+
+/* ══ CHAT ══ */
+.chat-messages{display:flex;flex-direction:column;gap:0.65rem;max-height:200px;overflow-y:auto;margin-bottom:0.75rem;}
+.chat-messages::-webkit-scrollbar{width:3px;}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.msg{max-width:88%;padding:0.68rem 0.88rem;border-radius:10px;font-size:0.8rem;line-height:1.6;}
+.msg-ai{background:var(--bg3);border:1px solid var(--border);color:var(--text);align-self:flex-start;border-bottom-left-radius:2px;}
+.msg-user{background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);align-self:flex-end;border-bottom-right-radius:2px;}
+.msg-label{font-size:0.62rem;color:var(--muted);margin-bottom:0.12rem;font-weight:500;}
+.chat-row{display:flex;gap:0.48rem;}
+.chat-inp{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;padding:0.58rem 0.82rem;outline:none;transition:all 0.2s;}
+.chat-inp::placeholder{color:rgba(123,140,173,0.5);}
+.chat-inp:focus{border-color:var(--gold-bdr);box-shadow:0 0 0 3px var(--gold-dim);}
+.chat-send{background:var(--gold);color:#080c18;border:none;border-radius:8px;padding:0.58rem 0.95rem;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.chat-send:hover{opacity:0.88;}
+.chat-note{font-size:0.67rem;color:var(--muted);margin-top:0.48rem;font-style:italic;}
+
+/* ══ QUICK ACTIONS ══ */
+.qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.65rem;}
+.qa{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.95rem;display:flex;flex-direction:column;align-items:flex-start;gap:0.32rem;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.qa:hover{border-color:var(--gold-bdr);background:var(--gold-dim);}
+.qa-ico{font-size:1.15rem;}
+.qa-lbl{font-size:0.81rem;font-weight:600;color:var(--text);}
+.qa-sub{font-size:0.69rem;color:var(--muted);font-weight:300;line-height:1.4;}
+
+/* ══ PROFILE MODAL ══ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;}
+.overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2rem;width:100%;max-width:470px;position:relative;animation:popIn 0.3s ease;}
+@keyframes popIn{from{transform:scale(0.95);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-title{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;margin-bottom:0.28rem;}
+.modal-title em{color:var(--gold);font-style:italic;}
+.modal-sub{font-size:0.82rem;color:var(--muted);font-weight:300;margin-bottom:1.4rem;line-height:1.6;}
+.m-row{display:grid;grid-template-columns:1fr 1fr;gap:0.72rem;}
+.m-field{margin-bottom:0.92rem;}
+.m-label{display:block;font-size:0.75rem;font-weight:500;color:var(--muted);margin-bottom:0.36rem;}
+.m-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.87rem;padding:0.66rem 0.92rem;outline:none;transition:all 0.2s;}
+.m-input::placeholder{color:rgba(123,140,173,0.5);}
+.m-input:focus{border-color:var(--gold-bdr);box-shadow:0 0 0 3px var(--gold-dim);}
+.m-actions{display:flex;gap:0.65rem;margin-top:1.3rem;}
+.btn-save{flex:1;background:var(--gold);color:#080c18;border:none;border-radius:8px;padding:0.72rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-save:hover{opacity:0.88;}
+.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:0.72rem 1.1rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+.btn-cancel:hover{color:var(--text);}
+.modal-x{position:absolute;top:1.1rem;right:1.1rem;background:transparent;border:none;color:var(--muted);font-size:1.15rem;cursor:pointer;transition:color 0.2s;}
+.modal-x:hover{color:var(--text);}
+
+@media(max-width:1200px){.stats-row{grid-template-columns:1fr 1fr 1fr 1fr;}.grid-3{grid-template-columns:1fr 1fr;}.qa-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:1000px){.grid-2,.grid-3{grid-template-columns:1fr;}.col-span-2{grid-column:span 1;}.stats-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;}.content{padding:1rem;}.stats-row{grid-template-columns:1fr 1fr;}.qa-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:500px){.stats-row{grid-template-columns:1fr;}.qa-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- PROFILE MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-title">Your <em>Profile</em></div>
+    <p class="modal-sub">Fill in your details. LumiPath will personalize scholarships, universities, and guidance specifically for you.</p>
+    <div class="m-row">
+      <div class="m-field">
+        <label class="m-label">Your first name ✱</label>
+        <input class="m-input" type="text" id="m-name" placeholder="e.g. Sarah"/>
+      </div>
+      <div class="m-field">
+        <label class="m-label">Field of study ✱</label>
+        <input class="m-input" type="text" id="m-field" placeholder="e.g. Biotechnology"/>
+      </div>
+    </div>
+    <div class="m-row">
+      <div class="m-field">
+        <label class="m-label">Degree level</label>
+        <select class="m-input" id="m-degree">
+          <option>Bachelor's</option>
+          <option selected>Master's (MSc)</option>
+          <option>PhD / Doctoral</option>
+          <option>Postdoc</option>
+        </select>
+      </div>
+      <div class="m-field">
+        <label class="m-label">Your country</label>
+        <input class="m-input" type="text" id="m-country" placeholder="e.g. India"/>
+      </div>
+    </div>
+    <div class="m-field">
+      <label class="m-label">Target scholarship countries</label>
+      <input class="m-input" type="text" id="m-target" placeholder="e.g. South Korea, China, Germany"/>
+    </div>
+    <div class="m-actions">
+      <button class="btn-save" onclick="saveProfile()">Save my profile →</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="index.html" class="sb-logo">
+    <span class="sb-dot"></span>
+    <span class="sb-logo-text"><span class="sl">Lumi</span><span class="sp">Path</span></span>
+  </a>
+
+  <div class="sb-profile">
+    <div class="sb-profile-top">
+      <div class="sb-av" onclick="openModal()" title="Click to edit profile" id="sb-avatar">?</div>
+      <div>
+        <div class="sb-name" id="sb-name">Your Name</div>
+        <div class="sb-role" id="sb-role">Click to set up profile</div>
+        <div class="sb-edit" onclick="openModal()">✏️ Edit profile</div>
+      </div>
+    </div>
+    <div class="sb-prog-label">
+      <span>Profile complete</span>
+      <span id="sb-pct">0%</span>
+    </div>
+    <div class="sb-prog-track">
+      <div class="sb-prog-fill" id="sb-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="sb-sec">Main</div>
+  <ul class="sb-nav">
+    <li><a href="dashboard.html" class="sb-a act"><span class="sb-ic">🏠</span>Dashboard</a></li>
+    <li><a href="scholarships.html" class="sb-a"><span class="sb-ic">🎓</span>Scholarships<span class="sb-badge">32</span></a></li>
+    <li><a href="sop.html" class="sb-a"><span class="sb-ic">📝</span>SOP Feedback</a></li>
+    <li><a href="tracker.html" class="sb-a"><span class="sb-ic">📅</span>App Tracker<span class="sb-badge teal">3</span></a></li>
+  </ul>
+  <div class="sb-sec">Learn</div>
+  <ul class="sb-nav">
+    <li><a href="research.html" class="sb-a"><span class="sb-ic">🧬</span>Research Roadmap</a></li>
+    <li><a href="#" class="sb-a"><span class="sb-ic">🔬</span>Research Assistant</a></li>
+    <li><a href="language.html" class="sb-a"><span class="sb-ic">🌏</span>Language Learning</a></li>
+    <li><a href="#" class="sb-a"><span class="sb-ic">🎯</span>Career Planner</a></li>
+  </ul>
+  <div class="sb-sec">Discover</div>
+  <ul class="sb-nav">
+    <li><a href="universities.html" class="sb-a"><span class="sb-ic">🏛️</span>Universities<span class="sb-badge">42</span></a></li>
+    <li><a href="professors.html" class="sb-a"><span class="sb-ic">👨‍🔬</span>Professors</a></li>
+    <li><a href="#" class="sb-a"><span class="sb-ic">🔭</span>Labs</a></li>
+    <li><a href="experiences.html" class="sb-a"><span class="sb-ic">💬</span>Student Stories</a></li>
+  </ul>
+  <div class="sb-sec">Account</div>
+  <ul class="sb-nav">
+    <li><a href="#" class="sb-a" onclick="openModal();return false;"><span class="sb-ic">👤</span>My Profile</a></li>
+    <li><a href="#" class="sb-a"><span class="sb-ic">⚙️</span>Settings</a></li>
+    <li><a href="#" class="sb-a"><span class="sb-ic">⚙️</span>Settings</a></li>
+    <li><a href="login.html" class="signout();returnfalse;"><span class="sb-ic">🚪</span>Log out</a></li>
+  </ul>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-greet">Welcome back, <span id="greet-name">Student</span> 👋</div>
+      <div class="tb-date" id="tb-date"></div>
+    </div>
+    <div class="tb-right">
+      <input class="tb-search" type="text" placeholder="Search..."/>
+      <button class="tb-icon">🔔<span class="notif-dot"></span></button>
+      <a href="scholarships.html" class="tb-gold">+ Find Scholarships</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- AI BANNER -->
+    <div class="ai-banner" id="ai-banner">
+      <span class="ai-banner-icon">🧭</span>
+      <div class="ai-body">
+        <div class="ai-label">LumiPath AI — Daily Guidance</div>
+        <div class="ai-msg" id="ai-msg">
+          Welcome! <strong>Set up your profile first</strong> — click your avatar in the sidebar. Once you add your name, field, and target countries, I can give you personalized scholarship matches, deadlines, and daily study guidance.
+        </div>
+        <div class="ai-note">I guide you — I never write your SOP or application for you. Your authentic voice wins. 🌟</div>
+      </div>
+      <button class="ai-close" onclick="this.closest('.ai-banner').style.display='none'">✕</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-top"><span class="stat-ico">🎓</span><span class="stat-chip chip-up">32 total</span></div>
+        <div class="stat-val">32<sup>+</sup></div>
+        <div class="stat-lbl">Worldwide scholarships</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top"><span class="stat-ico">🏛️</span><span class="stat-chip chip-info">42 total</span></div>
+        <div class="stat-val">42<sup>+</sup></div>
+        <div class="stat-lbl">Universities listed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top"><span class="stat-ico">📅</span><span class="stat-chip chip-warn">Urgent</span></div>
+        <div class="stat-val">3</div>
+        <div class="stat-lbl">Active applications</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top"><span class="stat-ico">🌍</span><span class="stat-chip chip-up">18 countries</span></div>
+        <div class="stat-val">18</div>
+        <div class="stat-lbl">Countries covered</div>
+      </div>
+    </div>
+
+    <!-- ROW 1: SCHOLARSHIPS + TRACKER -->
+    <div class="grid-2">
+
+      <!-- WORLDWIDE SCHOLARSHIPS WITH TABS -->
+      <div class="card">
+        <div class="card-head">
+          <div class="ch-left">
+            <span class="ch-icon">🎓</span>
+            <span class="ch-title">Worldwide Scholarships</span>
+            <span class="ch-badge">32 verified</span>
+          </div>
+          <a href="scholarships.html" class="ch-link">View all 32 →</a>
+        </div>
+
+        <!-- SCHOLARSHIP TABS -->
+        <div class="tabs" id="schol-tabs">
+          <button class="tab-btn active" onclick="switchTab('schol','east-asia',this)">🌏 East Asia</button>
+          <button class="tab-btn" onclick="switchTab('schol','europe',this)">🌍 Europe</button>
+          <button class="tab-btn" onclick="switchTab('schol','americas',this)">🌎 Americas</button>
+          <button class="tab-btn" onclick="switchTab('schol','oceania',this)">🦘 Oceania</button>
+          <button class="tab-btn" onclick="switchTab('schol','middle-east',this)">🌙 Middle East</button>
+          <button class="tab-btn" onclick="switchTab('schol','hidden',this)">💎 Hidden Gems</button>
+        </div>
+
+        <!-- EAST ASIA -->
+        <div class="tab-panel active" id="schol-east-asia">
+          <div class="schol-list">
+            <div class="schol-item"><span class="si-flag">🇨🇳</span><div class="si-body"><div class="si-name">Chinese Government Scholarship (CSC)</div><div class="si-meta">China · Ministry of Education · MSc / PhD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span><span class="si-tag tag-b">All fields</span></div></div><div class="si-right"><div class="si-match">91%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-u">Jul 1 — 47 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇰🇷</span><div class="si-body"><div class="si-name">Korean Government Scholarship (GKS)</div><div class="si-meta">South Korea · NIIED · MSc / PhD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">87%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-s">Sep 15 — 123 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇯🇵</span><div class="si-body"><div class="si-name">MEXT Japanese Government Scholarship</div><div class="si-meta">Japan · Ministry of Education · All levels</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">76%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Dec 2026 — 213 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇨🇳</span><div class="si-body"><div class="si-name">Belt and Road Scholarship (BRI)</div><div class="si-meta">China · CSC · Developing countries</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">79%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">May 2027 — 365 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇰🇷</span><div class="si-body"><div class="si-name">Seoul National University Global Scholarship</div><div class="si-meta">South Korea · SNU · MSc / PhD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-p">Partial funding</span></div></div><div class="si-right"><div class="si-match">74%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Mar 2027 — 290 days</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- EUROPE -->
+        <div class="tab-panel" id="schol-europe">
+          <div class="schol-list">
+            <div class="schol-item"><span class="si-flag">🇩🇪</span><div class="si-body"><div class="si-name">DAAD Research Grants</div><div class="si-meta">Germany · German Academic Exchange · MSc/PhD/Postdoc</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-p">Partial funding</span></div></div><div class="si-right"><div class="si-match">79%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Oct 1 — 138 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇬🇧</span><div class="si-body"><div class="si-name">Chevening Scholarship</div><div class="si-meta">United Kingdom · FCDO · Master's only</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">70%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Nov 3 — 171 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇬🇧</span><div class="si-body"><div class="si-name">Commonwealth Scholarships</div><div class="si-meta">UK · Commonwealth nations · MSc/PhD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">73%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Dec 2026 — 218 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇸🇪</span><div class="si-body"><div class="si-name">Swedish Institute Scholarship (SISGP)</div><div class="si-meta">Sweden · Swedish Institute · Master's</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">69%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Feb 2027 — 268 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇨🇭</span><div class="si-body"><div class="si-name">Swiss Government Excellence Scholarship</div><div class="si-meta">Switzerland · SERI · MSc/PhD/Postdoc</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">67%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Nov 2026 — 178 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇳🇱</span><div class="si-body"><div class="si-name">Holland Scholarship</div><div class="si-meta">Netherlands · Dutch Ministry · Bachelor/Master</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-p">€5,000 grant</span></div></div><div class="si-right"><div class="si-match">66%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Feb 2027 — 268 days</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- AMERICAS -->
+        <div class="tab-panel" id="schol-americas">
+          <div class="schol-list">
+            <div class="schol-item"><span class="si-flag">🇺🇸</span><div class="si-body"><div class="si-name">Fulbright Foreign Student Program</div><div class="si-meta">USA · U.S. Department of State · MSc/PhD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">68%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Oct 2026 — 145 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇺🇸</span><div class="si-body"><div class="si-name">Hubert H. Humphrey Fellowship</div><div class="si-meta">USA · State Department · Mid-career</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">58%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-s">Sep 2026 — 120 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇨🇦</span><div class="si-body"><div class="si-name">Vanier Canada Graduate Scholarships</div><div class="si-meta">Canada · Government · PhD only</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-b">$50,000 CAD/yr</span></div></div><div class="si-right"><div class="si-match">62%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Nov 2026 — 175 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇧🇷</span><div class="si-body"><div class="si-name">CAPES/CNPq Brazil Scholarship</div><div class="si-meta">Brazil · Government · MSc/PhD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-p">Partial funding</span></div></div><div class="si-right"><div class="si-match">55%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Rolling deadline</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- OCEANIA -->
+        <div class="tab-panel" id="schol-oceania">
+          <div class="schol-list">
+            <div class="schol-item"><span class="si-flag">🇦🇺</span><div class="si-body"><div class="si-name">Australia Awards Scholarships</div><div class="si-meta">Australia · DFAT · Developing countries</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">71%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Apr 2027 — 315 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇦🇺</span><div class="si-body"><div class="si-name">Research Training Program (RTP)</div><div class="si-meta">Australia · All universities · PhD/Master by research</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">65%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Rolling deadline</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇳🇿</span><div class="si-body"><div class="si-name">New Zealand Excellence Awards</div><div class="si-meta">New Zealand · MFAT · MSc/PhD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-h">💎 Hidden gem</span></div></div><div class="si-right"><div class="si-match">63%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Mar 2027 — 285 days</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- MIDDLE EAST -->
+        <div class="tab-panel" id="schol-middle-east">
+          <div class="schol-list">
+            <div class="schol-item"><span class="si-flag">🇹🇷</span><div class="si-body"><div class="si-name">Türkiye Scholarships (YTB)</div><div class="si-meta">Turkey · Government · All countries · All levels</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">64%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Feb 2027 — 265 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇸🇦</span><div class="si-body"><div class="si-name">King Abdullah Scholarship Program</div><div class="si-meta">Saudi Arabia · Government · All levels</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">59%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Rolling deadline</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇦🇪</span><div class="si-body"><div class="si-name">UAE University Scholarship for International Students</div><div class="si-meta">UAE · UAEU · MSc/PhD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-p">Partial funding</span></div></div><div class="si-right"><div class="si-match">56%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Feb 2027 — 268 days</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- HIDDEN GEMS -->
+        <div class="tab-panel" id="schol-hidden">
+          <div class="hidden-note">💎 <strong>Hidden gems</strong> — Less-known scholarships with much lower competition. Most students only apply to the famous ones. These give you a significantly better chance.</div>
+          <div class="schol-list">
+            <div class="schol-item"><span class="si-flag">🇰🇷</span><div class="si-body"><div class="si-name">POSTECH International Graduate Scholarship</div><div class="si-meta">South Korea · World-class biotech university</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-h">💎 Hidden</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">84%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Nov 2026 — 198 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇨🇳</span><div class="si-body"><div class="si-name">Zhejiang University Government Scholarship</div><div class="si-meta">China · Top biotech — fewer applicants than PKU</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-h">💎 Hidden</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">81%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-u">Jun 2026 — 30 days!</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇩🇪</span><div class="si-body"><div class="si-name">Heinrich Böll Foundation Scholarship</div><div class="si-meta">Germany · Far fewer applicants than DAAD</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-h">💎 Hidden</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">72%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Mar 2027 — 289 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇧🇪</span><div class="si-body"><div class="si-name">VLIR-UOS Scholarship (Belgium)</div><div class="si-meta">Belgium · Developing countries · Almost unknown</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-h">💎 Hidden</span><span class="si-tag tag-f">Fully funded</span></div></div><div class="si-right"><div class="si-match">64%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Jan 2027 — 238 days</span></div></div></div>
+            <div class="schol-item"><span class="si-flag">🇰🇷</span><div class="si-body"><div class="si-name">Yonsei University International Merit Scholarship</div><div class="si-meta">South Korea · SKY university · Less known than GKS</div><div class="si-tags"><span class="si-tag tag-v">✓ Verified</span><span class="si-tag tag-h">💎 Hidden</span><span class="si-tag tag-p">50% tuition</span></div></div><div class="si-right"><div class="si-match">68%</div><div class="si-match-lbl">match</div><div class="si-dl">📅 <span class="dl-ok">Apr 2027 — 310 days</span></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRACKER + LANGUAGE -->
+      <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+        <!-- APPLICATION TRACKER -->
+        <div class="card">
+          <div class="card-head">
+            <div class="ch-left"><span class="ch-icon">📅</span><span class="ch-title">Application Tracker</span><span class="ch-badge teal">3 active</span></div>
+            <a href="tracker.html" class="ch-link">Manage →</a>
+          </div>
+          <div class="card-body">
+            <div class="track-list">
+              <div class="track-item"><div class="ts ts-r"></div><div class="tr-body"><div class="tr-name">CSC Scholarship — China</div><div class="tr-meta">Missing: Research proposal · SOP needs work</div></div><div class="tr-right"><div class="tr-dl">Jul 1, 2026</div><div class="tr-days urg">47 days — urgent!</div></div></div>
+              <div class="track-item"><div class="ts ts-y"></div><div class="tr-body"><div class="tr-name">GKS Scholarship — Korea</div><div class="tr-meta">Waiting: TOPIK score · Documents ready</div></div><div class="tr-right"><div class="tr-dl">Sep 15, 2026</div><div class="tr-days soon">123 days</div></div></div>
+              <div class="track-item"><div class="ts ts-g"></div><div class="tr-body"><div class="tr-name">DAAD Fellowship — Germany</div><div class="tr-meta">All submitted · Awaiting response</div></div><div class="tr-right"><div class="tr-dl">Oct 1, 2026</div><div class="tr-days">138 days</div></div></div>
+              <button class="add-btn" onclick="alert('Connect Supabase to save real application data!')">+ Add new application</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LANGUAGE PROGRESS WITH TABS -->
+        <div class="card">
+          <div class="card-head">
+            <div class="ch-left"><span class="ch-icon">🌏</span><span class="ch-title">Language Progress</span><span class="ch-badge">3 active</span></div>
+            <a href="language.html" class="ch-link">Study now →</a>
+          </div>
+
+          <!-- LANGUAGE TABS -->
+          <div class="tabs">
+            <button class="tab-btn active teal-tab" onclick="switchTab('lang','korean',this,'teal')">🇰🇷 Korean</button>
+            <button class="tab-btn" onclick="switchTab('lang','chinese',this,'teal')">🇨🇳 Chinese</button>
+            <button class="tab-btn" onclick="switchTab('lang','english',this,'teal')">🇬🇧 English</button>
+            <button class="tab-btn" onclick="switchTab('lang','all',this,'teal')">📊 All</button>
+          </div>
+
+          <!-- KOREAN -->
+          <div class="tab-panel active" id="lang-korean">
+            <div class="lang-item">
+              <div class="li-top"><div class="li-left"><span class="li-flag">🇰🇷</span><div><div class="li-name">Korean (한국어)</div><div class="li-test">Target: TOPIK II Level 4 — GKS requirement</div></div></div><span class="li-pct">42%</span></div>
+              <div class="li-bar"><div class="lb-ko" style="width:42%;height:100%;border-radius:2px;"></div></div>
+            </div>
+            <div style="margin-top:0.9rem;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.85rem;">
+              <div style="font-size:0.72rem;font-weight:600;color:var(--teal);margin-bottom:0.5rem;">📌 Today's study plan</div>
+              <div style="font-size:0.8rem;color:var(--muted);line-height:1.6;font-weight:300;">Vocabulary: 20 new words from TOPIK Level 3 list · Grammar: practice -(으)ㄹ 것이다 future tense · Reading: 1 short paragraph passage</div>
+            </div>
+            <a href="language.html" class="lang-study-btn">Start today's Korean lesson →</a>
+          </div>
+
+          <!-- CHINESE -->
+          <div class="tab-panel" id="lang-chinese">
+            <div class="lang-item">
+              <div class="li-top"><div class="li-left"><span class="li-flag">🇨🇳</span><div><div class="li-name">Chinese (中文)</div><div class="li-test">Target: HSK Level 4 — CSC recommendation</div></div></div><span class="li-pct">28%</span></div>
+              <div class="li-bar"><div class="lb-zh" style="width:28%;height:100%;border-radius:2px;"></div></div>
+            </div>
+            <div style="margin-top:0.9rem;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.85rem;">
+              <div style="font-size:0.72rem;font-weight:600;color:var(--gold);margin-bottom:0.5rem;">📌 Today's study plan</div>
+              <div style="font-size:0.8rem;color:var(--muted);line-height:1.6;font-weight:300;">Vocabulary: 15 HSK 3 characters with tones · Grammar: 把 (bǎ) sentence structure · Listening: 1 short HSK dialogue</div>
+            </div>
+            <a href="language.html" class="lang-study-btn">Start today's Chinese lesson →</a>
+          </div>
+
+          <!-- ENGLISH -->
+          <div class="tab-panel" id="lang-english">
+            <div class="lang-item">
+              <div class="li-top"><div class="li-left"><span class="li-flag">🇬🇧</span><div><div class="li-name">English (IELTS)</div><div class="li-test">Target: Band 6.5 — DAAD / Chevening requirement</div></div></div><span class="li-pct">71%</span></div>
+              <div class="li-bar"><div class="lb-en" style="width:71%;height:100%;border-radius:2px;"></div></div>
+            </div>
+            <div style="margin-top:0.9rem;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.85rem;">
+              <div style="font-size:0.72rem;font-weight:600;color:var(--blue);margin-bottom:0.5rem;">📌 Today's study plan</div>
+              <div style="font-size:0.8rem;color:var(--muted);line-height:1.6;font-weight:300;">Academic writing: practice Task 2 essay structure · Reading: 1 IELTS Academic passage with questions · Vocabulary: academic word list set 7</div>
+            </div>
+            <a href="language.html" class="lang-study-btn">Start today's English lesson →</a>
+          </div>
+
+          <!-- ALL -->
+          <div class="tab-panel" id="lang-all">
+            <div class="lang-list">
+              <div class="lang-item"><div class="li-top"><div class="li-left"><span class="li-flag">🇰🇷</span><div><div class="li-name">Korean</div><div class="li-test">TOPIK II — GKS requirement</div></div></div><span class="li-pct">42%</span></div><div class="li-bar"><div class="lb-ko" style="width:42%;height:100%;border-radius:2px;"></div></div></div>
+              <div class="lang-item"><div class="li-top"><div class="li-left"><span class="li-flag">🇨🇳</span><div><div class="li-name">Chinese</div><div class="li-test">HSK 4 — CSC recommendation</div></div></div><span class="li-pct">28%</span></div><div class="li-bar"><div class="lb-zh" style="width:28%;height:100%;border-radius:2px;"></div></div></div>
+              <div class="lang-item"><div class="li-top"><div class="li-left"><span class="li-flag">🇬🇧</span><div><div class="li-name">English</div><div class="li-test">IELTS Band 6.5 — DAAD requirement</div></div></div><span class="li-pct">71%</span></div><div class="li-bar"><div class="lb-en" style="width:71%;height:100%;border-radius:2px;"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: UNIVERSITIES + CHAT -->
+    <div class="grid-2">
+
+      <!-- WORLDWIDE UNIVERSITIES WITH TABS -->
+      <div class="card">
+        <div class="card-head">
+          <div class="ch-left"><span class="ch-icon">🏛️</span><span class="ch-title">Worldwide Universities</span><span class="ch-badge teal">42 listed</span></div>
+          <a href="universities.html" class="ch-link">Browse all →</a>
+        </div>
+
+        <!-- UNIVERSITY TABS -->
+        <div class="tabs" id="uni-tabs">
+          <button class="tab-btn active teal-tab" onclick="switchTab('uni','korea',this,'teal')">🇰🇷 Korea</button>
+          <button class="tab-btn" onclick="switchTab('uni','china',this,'teal')">🇨🇳 China</button>
+          <button class="tab-btn" onclick="switchTab('uni','japan',this,'teal')">🇯🇵 Japan</button>
+          <button class="tab-btn" onclick="switchTab('uni','europe',this,'teal')">🌍 Europe</button>
+          <button class="tab-btn" onclick="switchTab('uni','usa',this,'teal')">🇺🇸 USA</button>
+          <button class="tab-btn" onclick="switchTab('uni','australia',this,'teal')">🇦🇺 Aus/NZ</button>
+          <button class="tab-btn" onclick="switchTab('uni','canada',this,'teal')">🇨🇦 Canada</button>
+        </div>
+
+        <!-- KOREA UNIS -->
+        <div class="tab-panel active" id="uni-korea">
+          <div class="uni-list">
+            <div class="uni-item"><span class="ui-flag">🇰🇷</span><div class="ui-body"><div class="ui-name">Seoul National University (SNU)</div><div class="ui-loc">Seoul · Est. 1946 · 28,000 students</div><div class="ui-tags"><span class="ui-tag">🧬 Genetics</span><span class="ui-tag">AMR Research</span><span class="ui-tag">Bioinformatics</span></div></div><div class="ui-rank"><div class="ui-rank-num">#45</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇰🇷</span><div class="ui-body"><div class="ui-name">KAIST</div><div class="ui-loc">Daejeon · Est. 1971 · 12,000 students</div><div class="ui-tags"><span class="ui-tag">Synthetic Biology</span><span class="ui-tag">Biomedical Eng</span></div></div><div class="ui-rank"><div class="ui-rank-num">#99</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇰🇷</span><div class="ui-body"><div class="ui-name">POSTECH</div><div class="ui-loc">Pohang · Est. 1986 · 4,500 students</div><div class="ui-tags"><span class="ui-tag">Biotechnology</span><span class="ui-tag">Molecular Genetics</span></div></div><div class="ui-rank"><div class="ui-rank-num">#178</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇰🇷</span><div class="ui-body"><div class="ui-name">Yonsei University</div><div class="ui-loc">Seoul · Est. 1885 · 38,000 students</div><div class="ui-tags"><span class="ui-tag">Medicine</span><span class="ui-tag">Life Sciences</span></div></div><div class="ui-rank"><div class="ui-rank-num">#167</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇰🇷</span><div class="ui-body"><div class="ui-name">Korea University</div><div class="ui-loc">Seoul · Est. 1905 · 35,000 students</div><div class="ui-tags"><span class="ui-tag">CS</span><span class="ui-tag">Life Sciences</span></div></div><div class="ui-rank"><div class="ui-rank-num">#179</div><div class="ui-rank-lbl">World</div></div></div>
+          </div>
+        </div>
+
+        <!-- CHINA UNIS -->
+        <div class="tab-panel" id="uni-china">
+          <div class="uni-list">
+            <div class="uni-item"><span class="ui-flag">🇨🇳</span><div class="ui-body"><div class="ui-name">Peking University (PKU)</div><div class="ui-loc">Beijing · Est. 1898 · 45,000 students</div><div class="ui-tags"><span class="ui-tag">Life Sciences</span><span class="ui-tag">Genomics</span><span class="ui-tag">Medicine</span></div></div><div class="ui-rank"><div class="ui-rank-num">#22</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇨🇳</span><div class="ui-body"><div class="ui-name">Tsinghua University</div><div class="ui-loc">Beijing · Est. 1911 · 48,000 students</div><div class="ui-tags"><span class="ui-tag">Engineering</span><span class="ui-tag">AI</span><span class="ui-tag">Bioinformatics</span></div></div><div class="ui-rank"><div class="ui-rank-num">#24</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇨🇳</span><div class="ui-body"><div class="ui-name">Zhejiang University</div><div class="ui-loc">Hangzhou · Est. 1897 · 58,000 students</div><div class="ui-tags"><span class="ui-tag">Biotechnology</span><span class="ui-tag">Medicine</span></div></div><div class="ui-rank"><div class="ui-rank-num">#87</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇨🇳</span><div class="ui-body"><div class="ui-name">Fudan University</div><div class="ui-loc">Shanghai · Est. 1905 · 42,000 students</div><div class="ui-tags"><span class="ui-tag">Genetics</span><span class="ui-tag">Medicine</span></div></div><div class="ui-rank"><div class="ui-rank-num">#64</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇨🇳</span><div class="ui-body"><div class="ui-name">Shanghai Jiao Tong University</div><div class="ui-loc">Shanghai · Est. 1896 · 47,000 students</div><div class="ui-tags"><span class="ui-tag">Biomedical</span><span class="ui-tag">Engineering</span></div></div><div class="ui-rank"><div class="ui-rank-num">#73</div><div class="ui-rank-lbl">World</div></div></div>
+          </div>
+        </div>
+
+        <!-- JAPAN UNIS -->
+        <div class="tab-panel" id="uni-japan">
+          <div class="uni-list">
+            <div class="uni-item"><span class="ui-flag">🇯🇵</span><div class="ui-body"><div class="ui-name">University of Tokyo</div><div class="ui-loc">Tokyo · Est. 1877 · 28,000 students</div><div class="ui-tags"><span class="ui-tag">Engineering</span><span class="ui-tag">Life Sciences</span><span class="ui-tag">Medicine</span></div></div><div class="ui-rank"><div class="ui-rank-num">#39</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇯🇵</span><div class="ui-body"><div class="ui-name">Kyoto University</div><div class="ui-loc">Kyoto · Est. 1897 · 23,000 students</div><div class="ui-tags"><span class="ui-tag">iPS Stem Cells</span><span class="ui-tag">Medicine</span></div></div><div class="ui-rank"><div class="ui-rank-num">#68</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇯🇵</span><div class="ui-body"><div class="ui-name">Osaka University</div><div class="ui-loc">Osaka · Est. 1931 · 24,000 students</div><div class="ui-tags"><span class="ui-tag">Immunology</span><span class="ui-tag">Biotechnology</span></div></div><div class="ui-rank"><div class="ui-rank-num">#75</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇯🇵</span><div class="ui-body"><div class="ui-name">Tokyo Institute of Technology</div><div class="ui-loc">Tokyo · Est. 1881 · 10,000 students</div><div class="ui-tags"><span class="ui-tag">Engineering</span><span class="ui-tag">Bioscience</span></div></div><div class="ui-rank"><div class="ui-rank-num">#165</div><div class="ui-rank-lbl">World</div></div></div>
+          </div>
+        </div>
+
+        <!-- EUROPE UNIS -->
+        <div class="tab-panel" id="uni-europe">
+          <div class="uni-list">
+            <div class="uni-item"><span class="ui-flag">🇨🇭</span><div class="ui-body"><div class="ui-name">ETH Zurich</div><div class="ui-loc">Switzerland · Est. 1855 · 22,000 students</div><div class="ui-tags"><span class="ui-tag">Engineering</span><span class="ui-tag">AI</span><span class="ui-tag">Biology</span></div></div><div class="ui-rank"><div class="ui-rank-num">#7</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇬🇧</span><div class="ui-body"><div class="ui-name">University of Oxford</div><div class="ui-loc">UK · Est. 1096 · 26,000 students</div><div class="ui-tags"><span class="ui-tag">Medicine</span><span class="ui-tag">Genomics</span></div></div><div class="ui-rank"><div class="ui-rank-num">#3</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇬🇧</span><div class="ui-body"><div class="ui-name">University of Cambridge</div><div class="ui-loc">UK · Est. 1209 · 23,000 students</div><div class="ui-tags"><span class="ui-tag">Molecular Biology</span><span class="ui-tag">Genetics</span></div></div><div class="ui-rank"><div class="ui-rank-num">#4</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇩🇪</span><div class="ui-body"><div class="ui-name">Technical University Munich (TUM)</div><div class="ui-loc">Germany · Est. 1868 · 48,000 students</div><div class="ui-tags"><span class="ui-tag">Engineering</span><span class="ui-tag">Biotechnology</span></div></div><div class="ui-rank"><div class="ui-rank-num">#55</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇸🇪</span><div class="ui-body"><div class="ui-name">Karolinska Institute</div><div class="ui-loc">Sweden · Est. 1810 · 6,000 students</div><div class="ui-tags"><span class="ui-tag">Medicine</span><span class="ui-tag">AMR Research</span></div></div><div class="ui-rank"><div class="ui-rank-num">#47</div><div class="ui-rank-lbl">World</div></div></div>
+          </div>
+        </div>
+
+        <!-- USA UNIS -->
+        <div class="tab-panel" id="uni-usa">
+          <div class="uni-list">
+            <div class="uni-item"><span class="ui-flag">🇺🇸</span><div class="ui-body"><div class="ui-name">MIT</div><div class="ui-loc">Cambridge MA · Est. 1861 · 11,000 students</div><div class="ui-tags"><span class="ui-tag">Engineering</span><span class="ui-tag">AI</span><span class="ui-tag">Biology</span></div></div><div class="ui-rank"><div class="ui-rank-num">#1</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇺🇸</span><div class="ui-body"><div class="ui-name">Stanford University</div><div class="ui-loc">California · Est. 1885 · 17,000 students</div><div class="ui-tags"><span class="ui-tag">AI</span><span class="ui-tag">Medicine</span><span class="ui-tag">Genomics</span></div></div><div class="ui-rank"><div class="ui-rank-num">#5</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇺🇸</span><div class="ui-body"><div class="ui-name">Johns Hopkins University</div><div class="ui-loc">Maryland · Est. 1876 · 27,000 students</div><div class="ui-tags"><span class="ui-tag">Public Health</span><span class="ui-tag">AMR</span></div></div><div class="ui-rank"><div class="ui-rank-num">#18</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇺🇸</span><div class="ui-body"><div class="ui-name">UC Berkeley</div><div class="ui-loc">California · Est. 1868 · 43,000 students</div><div class="ui-tags"><span class="ui-tag">CS</span><span class="ui-tag">Engineering</span><span class="ui-tag">Biotech</span></div></div><div class="ui-rank"><div class="ui-rank-num">#9</div><div class="ui-rank-lbl">World</div></div></div>
+          </div>
+        </div>
+
+        <!-- AUSTRALIA -->
+        <div class="tab-panel" id="uni-australia">
+          <div class="uni-list">
+            <div class="uni-item"><span class="ui-flag">🇦🇺</span><div class="ui-body"><div class="ui-name">University of Melbourne</div><div class="ui-loc">Melbourne · Est. 1853 · 52,000 students</div><div class="ui-tags"><span class="ui-tag">Medicine</span><span class="ui-tag">Biotechnology</span></div></div><div class="ui-rank"><div class="ui-rank-num">#33</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇦🇺</span><div class="ui-body"><div class="ui-name">Australian National University</div><div class="ui-loc">Canberra · Est. 1946 · 25,000 students</div><div class="ui-tags"><span class="ui-tag">Physics</span><span class="ui-tag">Biology</span></div></div><div class="ui-rank"><div class="ui-rank-num">#67</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇳🇿</span><div class="ui-body"><div class="ui-name">University of Auckland</div><div class="ui-loc">Auckland · Est. 1883 · 46,000 students</div><div class="ui-tags"><span class="ui-tag">Biomedical</span><span class="ui-tag">Engineering</span></div></div><div class="ui-rank"><div class="ui-rank-num">#87</div><div class="ui-rank-lbl">World</div></div></div>
+          </div>
+        </div>
+
+        <!-- CANADA -->
+        <div class="tab-panel" id="uni-canada">
+          <div class="uni-list">
+            <div class="uni-item"><span class="ui-flag">🇨🇦</span><div class="ui-body"><div class="ui-name">University of Toronto</div><div class="ui-loc">Toronto · Est. 1827 · 97,000 students</div><div class="ui-tags"><span class="ui-tag">Medicine</span><span class="ui-tag">AI</span><span class="ui-tag">Life Sciences</span></div></div><div class="ui-rank"><div class="ui-rank-num">#21</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇨🇦</span><div class="ui-body"><div class="ui-name">McGill University</div><div class="ui-loc">Montreal · Est. 1821 · 40,000 students</div><div class="ui-tags"><span class="ui-tag">Medicine</span><span class="ui-tag">Neuroscience</span></div></div><div class="ui-rank"><div class="ui-rank-num">#44</div><div class="ui-rank-lbl">World</div></div></div>
+            <div class="uni-item"><span class="ui-flag">🇨🇦</span><div class="ui-body"><div class="ui-name">University of British Columbia</div><div class="ui-loc">Vancouver · Est. 1908 · 65,000 students</div><div class="ui-tags"><span class="ui-tag">Biotech</span><span class="ui-tag">Forestry</span></div></div><div class="ui-rank"><div class="ui-rank-num">#46</div><div class="ui-rank-lbl">World</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI CHAT + ROADMAP -->
+      <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+        <!-- AI CHAT -->
+        <div class="card">
+          <div class="card-head">
+            <div class="ch-left"><span class="ch-icon">🤖</span><span class="ch-title">Ask LumiPath AI</span><span class="ch-badge blue">Guide mode</span></div>
+          </div>
+          <div class="card-body">
+            <div class="chat-messages" id="chat-msgs">
+              <div>
+                <div class="msg-label">LumiPath AI</div>
+                <div class="msg msg-ai">Hello! I can answer scholarship questions, explain research topics, or give feedback guidance on specific parts of your SOP. What would you like help with today?</div>
+              </div>
+            </div>
+            <div class="chat-row">
+              <input class="chat-inp" id="chat-in" type="text" placeholder="Ask about scholarships, research..."/>
+              <button class="chat-send" onclick="sendChat()">→</button>
+            </div>
+            <div class="chat-note">AI guides with verified info. Never writes your documents for you.</div>
+          </div>
+        </div>
+
+        <!-- RESEARCH ROADMAP -->
+        <div class="card">
+          <div class="card-head">
+            <div class="ch-left"><span class="ch-icon">🧬</span><span class="ch-title">Research Roadmap</span><span class="ch-badge">Biotechnology</span></div>
+            <a href="research.html" class="ch-link">Continue →</a>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom:0.95rem;">
+              <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--muted);margin-bottom:0.22rem;"><span>Module 3 of 8 — Genetics</span><span style="color:var(--gold);">37%</span></div>
+              <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden;"><div style="width:37%;height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:3px;"></div></div>
+            </div>
+            <div class="rm-list">
+              <div class="rm-item"><div class="rm-circle rc-done">✓</div><div class="rm-body"><div class="rm-title">Cell Biology Fundamentals</div><div class="rm-bar"><div class="rb-done" style="width:100%;height:100%;border-radius:2px;"></div></div></div></div>
+              <div class="rm-item"><div class="rm-circle rc-done">✓</div><div class="rm-body"><div class="rm-title">Molecular Biology Basics</div><div class="rm-bar"><div class="rb-done" style="width:100%;height:100%;border-radius:2px;"></div></div></div></div>
+              <div class="rm-item"><div class="rm-circle rc-active">→</div><div class="rm-body"><div class="rm-title">Genetics & Gene Expression</div><div class="rm-sub">Lesson 3 of 7 — in progress</div><div class="rm-bar"><div class="rb-active" style="width:43%;height:100%;border-radius:2px;"></div></div></div></div>
+              <div class="rm-item"><div class="rm-circle rc-locked">🔒</div><div class="rm-body"><div class="rm-title" style="color:var(--muted);">CRISPR & Gene Editing</div><div class="rm-sub">Unlocks after current module</div></div></div>
+              <div class="rm-item"><div class="rm-circle rc-locked">🔒</div><div class="rm-body"><div class="rm-title" style="color:var(--muted);">AMR & Bioinformatics</div><div class="rm-sub">Coming soon</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: QUICK ACTIONS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="ch-left"><span class="ch-icon">⚡</span><span class="ch-title">Quick Actions</span></div>
+      </div>
+      <div class="card-body">
+        <div class="qa-grid">
+          <a href="scholarships.html" class="qa"><span class="qa-ico">🔎</span><span class="qa-lbl">Find Scholarships</span><span class="qa-sub">Browse 32+ verified worldwide opportunities</span></a>
+          <a href="sop.html" class="qa"><span class="qa-ico">📝</span><span class="qa-lbl">SOP Feedback</span><span class="qa-sub">Get honest guidance — AI never writes for you</span></a>
+          <a href="universities.html" class="qa"><span class="qa-ico">🏛️</span><span class="qa-lbl">Universities</span><span class="qa-sub">42+ universities across 12 countries</span></a>
+          <a href="research.html" class="qa"><span class="qa-ico">🧬</span><span class="qa-lbl">Research Roadmap</span><span class="qa-sub">Continue Genetics — 4 lessons remaining</span></a>
+          <a href="language.html" class="qa"><span class="qa-ico">🌏</span><span class="qa-lbl">Language Study</span><span class="qa-sub">Today: TOPIK vocabulary + Chinese HSK</span></a>
+          <a href="experiences.html" class="qa"><span class="qa-ico">💬</span><span class="qa-lbl">Student Stories</span><span class="qa-sub">Real scholarship winner experiences</span></a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+<script>
+// ══════════════════════════════════════
+// SUPABASE CONFIG
+// (already added in head — this is just a note)
+// ══════════════════════════════════════
+
+// ══════════════════════════════════════
+// MAIN FUNCTION — runs when page loads
+// Loads everything from database OR localStorage
+// ══════════════════════════════════════
+async function initDashboard() {
+
+  // STEP 1: Check if student is logged in
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) {
+    // ── LOGGED IN — load from real database ──
+    await loadFromDatabase(user);
+  } else {
+    // ── NOT logged in — load from localStorage ──
+    // (works while you are still building/testing)
+    loadFromLocalStorage();
+  }
+
+  // Always run these (they don't need database)
+  setDate();
+}
+
+// ══════════════════════════════════════
+// LOAD FROM REAL DATABASE (Supabase)
+// ══════════════════════════════════════
+async function loadFromDatabase(user) {
+
+  // Load student profile
+  const { data: profile, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (profile) {
+    applyProfile({
+      name:    profile.name,
+      field:   profile.field_of_study,
+      degree:  profile.degree_level,
+      country: profile.country,
+      target:  profile.target_countries,
+    });
+  } else {
+    // Profile not set up yet — show modal
+    openModal();
+  }
+
+  // Load applications
+  const { data: applications } = await supabase
+    .from('applications')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('deadline', { ascending: true });
+
+  if (applications && applications.length > 0) {
+    renderApplications(applications);
+    // Update stat card
+    document.querySelector('.stats-row .stat:nth-child(3) .stat-val')
+      .textContent = applications.length;
+  }
+
+  // Load language progress
+  const { data: languages } = await supabase
+    .from('language_progress')
+    .select('*')
+    .eq('user_id', user.id);
+
+  if (languages && languages.length > 0) {
+    renderLanguageProgress(languages);
+  }
+}
+
+// ══════════════════════════════════════
+// RENDER APPLICATIONS IN TRACKER
+// ══════════════════════════════════════
+function renderApplications(apps) {
+  const list = document.querySelector('.track-list');
+  if (!list) return;
+
+  // Keep the "add" button
+  const addBtn = list.querySelector('.add-btn');
+
+  // Clear existing demo items
+  list.innerHTML = '';
+
+  // Add real applications
+  apps.forEach(app => {
+    const deadline = new Date(app.deadline);
+    const today    = new Date();
+    const daysLeft = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+
+    // Color based on urgency
+    let dotClass  = 'ts-g';   // green = fine
+    let daysClass = '';
+    let daysText  = daysLeft + ' days left';
+
+    if (daysLeft < 30) {
+      dotClass  = 'ts-r';   // red = urgent
+      daysClass = 'urg';
+      daysText  = daysLeft + ' days — urgent!';
+    } else if (daysLeft < 90) {
+      dotClass  = 'ts-y';   // yellow = soon
+      daysClass = 'soon';
+    }
+
+    list.innerHTML += `
+      <div class="track-item">
+        <div class="ts ${dotClass}"></div>
+        <div class="tr-body">
+          <div class="tr-name">${app.scholarship_name}</div>
+          <div class="tr-meta">${app.notes || 'No notes yet'}</div>
+        </div>
+        <div class="tr-right">
+          <div class="tr-dl">${deadline.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})}</div>
+          <div class="tr-days ${daysClass}">${daysText}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  // Put add button back
+  if (addBtn) list.appendChild(addBtn);
+}
+
+// ══════════════════════════════════════
+// RENDER LANGUAGE PROGRESS FROM DATABASE
+// ══════════════════════════════════════
+function renderLanguageProgress(languages) {
+  languages.forEach(lang => {
+    // Find the progress bar for this language
+    if (lang.language === 'Korean') {
+      const bar = document.querySelector('.lb-ko');
+      const pct = document.querySelector('.lb-ko')?.closest('.lang-item')?.querySelector('.li-pct');
+      if (bar) bar.style.width = lang.percentage + '%';
+      if (pct) pct.textContent = lang.percentage + '%';
+    }
+    if (lang.language === 'Chinese') {
+      const bar = document.querySelector('.lb-zh');
+      const pct = document.querySelector('.lb-zh')?.closest('.lang-item')?.querySelector('.li-pct');
+      if (bar) bar.style.width = lang.percentage + '%';
+      if (pct) pct.textContent = lang.percentage + '%';
+    }
+    if (lang.language === 'English') {
+      const bar = document.querySelector('.lb-en');
+      const pct = document.querySelector('.lb-en')?.closest('.lang-item')?.querySelector('.li-pct');
+      if (bar) bar.style.width = lang.percentage + '%';
+      if (pct) pct.textContent = lang.percentage + '%';
+    }
+  });
+}
+
+// ══════════════════════════════════════
+// LOAD FROM LOCALSTORAGE
+// (used when not logged in / testing)
+// ══════════════════════════════════════
+function loadFromLocalStorage() {
+  try {
+    const saved = localStorage.getItem('lumipath_profile');
+    if (saved) {
+      applyProfile(JSON.parse(saved));
+    }
+  } catch(e) {
+    console.log('No profile in localStorage');
+  }
+}
+
+// ══════════════════════════════════════
+// APPLY PROFILE TO ALL ELEMENTS
+// Works for both database and localStorage
+// ══════════════════════════════════════
+function applyProfile(p) {
+  if (!p || !p.name) return;
+
+  const firstName = p.name.split(' ')[0];
+
+  // Sidebar avatar letter
+  const avatar = document.getElementById('sb-avatar');
+  if (avatar) avatar.textContent = firstName[0].toUpperCase();
+
+  // Sidebar name and role
+  const sbName = document.getElementById('sb-name');
+  const sbRole = document.getElementById('sb-role');
+  if (sbName) sbName.textContent = p.name;
+  if (sbRole) sbRole.textContent = [p.field, p.degree].filter(Boolean).join(' · ');
+
+  // Topbar greeting
+  const greet = document.getElementById('greet-name');
+  if (greet) greet.textContent = firstName;
+
+  // AI banner message
+  const aiMsg = document.getElementById('ai-msg');
+  if (aiMsg) {
+    aiMsg.innerHTML = `Good to see you, <strong>${firstName}</strong>! 
+      Based on your profile — <strong>${p.field || 'your field'}</strong>, 
+      targeting <strong>${p.target || 'global scholarships'}</strong> — 
+      the <strong>CSC Scholarship (China)</strong> deadline is in 47 days 
+      and is your strongest match right now. I recommend spending 20 minutes 
+      on Korean vocabulary today before working on your SOP research section.`;
+  }
+
+  // Profile completeness bar
+  let pct = 0;
+  if (p.name)    pct += 25;
+  if (p.field)   pct += 25;
+  if (p.degree)  pct += 25;
+  if (p.target)  pct += 25;
+
+  const pctEl  = document.getElementById('sb-pct');
+  const fillEl = document.getElementById('sb-fill');
+  if (pctEl)  pctEl.textContent  = pct + '%';
+  if (fillEl) fillEl.style.width = pct + '%';
+}
+
+// ══════════════════════════════════════
+// PROFILE MODAL — OPEN / CLOSE / SAVE
+// ══════════════════════════════════════
+function openModal() {
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+async function saveProfile() {
+  const name = document.getElementById('m-name').value.trim();
+  if (!name) { alert('Please enter your name.'); return; }
+
+  const p = {
+    name,
+    field:   document.getElementById('m-field').value.trim(),
+    degree:  document.getElementById('m-degree').value,
+    country: document.getElementById('m-country').value.trim(),
+    target:  document.getElementById('m-target').value.trim(),
+  };
+
+  // Always save to localStorage first (instant)
+  localStorage.setItem('lumipath_profile', JSON.stringify(p));
+  applyProfile(p);
+
+  // Also save to database if logged in
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    await supabase.from('users').upsert({
+      id:               user.id,
+      name:             p.name,
+      field_of_study:   p.field,
+      degree_level:     p.degree,
+      country:          p.country,
+      target_countries: p.target,
+    });
+  }
+
+  closeModal();
+}
+
+// ══════════════════════════════════════
+// ADD NEW APPLICATION TO DATABASE
+// ══════════════════════════════════════
+async function addApplication(scholarshipName, deadline) {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    alert('Please log in to track applications.');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('applications')
+    .insert({
+      user_id:          user.id,
+      scholarship_name: scholarshipName,
+      deadline:         deadline,
+      status:           'pending',
+    });
+
+  if (!error) {
+    // Reload applications
+    const { data: apps } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('deadline', { ascending: true });
+
+    if (apps) renderApplications(apps);
+  }
+}
+
+// ══════════════════════════════════════
+// SIGN OUT
+// ══════════════════════════════════════
+async function signOut() {
+  await supabase.auth.signOut();
+  localStorage.removeItem('lumipath_profile');
+  window.location.href = 'login.html';
+}
+
+// ══════════════════════════════════════
+// DATE
+// ══════════════════════════════════════
+function setDate() {
+  const d = new Date();
+  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const el = document.getElementById('tb-date');
+  if (el) el.textContent = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+// ══════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════
+function switchTab(section, id, clickedBtn, color) {
+  document.querySelectorAll('[id^="' + section + '-"]').forEach(p => p.classList.remove('active'));
+  clickedBtn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+    if (color === 'teal') b.classList.remove('teal-tab');
+  });
+  const panel = document.getElementById(section + '-' + id);
+  if (panel) panel.classList.add('active');
+  clickedBtn.classList.add('active');
+  if (color === 'teal') clickedBtn.classList.add('teal-tab');
+}
+
+// ══════════════════════════════════════
+// AI CHAT
+// ══════════════════════════════════════
+function sendChat() {
+  const inp  = document.getElementById('chat-in');
+  const msgs = document.getElementById('chat-msgs');
+  const val  = inp.value.trim();
+  if (!val) return;
+
+  msgs.innerHTML += `
+    <div style="align-self:flex-end">
+      <div class="msg-label" style="text-align:right">You</div>
+      <div class="msg msg-user">${val}</div>
+    </div>`;
+  inp.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const id = 'think-' + Date.now();
+  msgs.innerHTML += `
+    <div id="${id}">
+      <div class="msg-label">LumiPath AI</div>
+      <div class="msg msg-ai" style="color:var(--muted);font-style:italic;">Thinking...</div>
+    </div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const replies = [
+    "Based on verified information from official sources, I can help point you in the right direction. Always confirm details directly on the official scholarship portal.",
+    "I want to be honest — I am not fully certain about this specific detail. I recommend checking the official website. I would rather say I don't know than give you incorrect information.",
+    "Good question. Rather than giving a direct answer, let me ask: what specifically interests you most about this? Your answer helps me guide you more precisely.",
+    "From what I can verify, here is what I know — though I encourage you to confirm independently, as scholarship details can change at any time.",
+  ];
+
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) {
+      const msgEl = el.querySelector('.msg-ai');
+      msgEl.style.fontStyle = 'normal';
+      msgEl.style.color     = '';
+      msgEl.textContent     = replies[Math.floor(Math.random() * replies.length)];
+      msgs.scrollTop        = msgs.scrollHeight;
+    }
+  }, 1300);
+}
+
+// Enter key sends message
+document.getElementById('chat-in')?.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') sendChat();
+});
+
+// Click outside modal closes it
+document.getElementById('overlay')?.addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ══════════════════════════════════════
+// START EVERYTHING
+// ══════════════════════════════════════
+initDashboard();
+</script>
+</body>
+</html>
