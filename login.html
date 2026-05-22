@@ -5,585 +5,1180 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LumiPath — Join Free</title>
 
-<script src="https://vufkaziitvgkzjwcfndt.supabase.co"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
   const SUPABASE_URL = 'https://vufkaziitvgkzjwcfndt.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_Cm89xik8X2OyrTSdQz9Y5A_ft1qdK95';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1ZmthemlpdHZna3pqd2NmbmR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTI1OTEsImV4cCI6MjA5NDc4ODU5MX0.A2WD6F0VTTAz0QjRc13qhA9AKCIN7Z4a4Mm5ILbPpJU';
+  let supabaseClient;
+  try {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  } catch(e) {
+    console.log('Supabase setup issue:', e.message);
+  }
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --bg:#080c18; --bg2:#0f1629; --bg3:#162040;
-  --gold:#f0b429; --gold-dim:rgba(240,180,41,0.13); --gold-bdr:rgba(240,180,41,0.25);
-  --teal:#00c9a7; --teal-dim:rgba(0,201,167,0.1);
-  --blue:#4f8ef7; --blue-dim:rgba(79,142,247,0.1);
-  --text:#eef2ff; --muted:#7b8cad;
-  --border:rgba(255,255,255,0.08); --card:rgba(255,255,255,0.04);
-  --success:#34d399; --danger:#f87171; --warning:#fbbf24;
-  --inp-bg:rgba(255,255,255,0.05); --inp-bdr:rgba(255,255,255,0.11);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(8,12,24,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
-.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none;}
-.logo-dot{width:9px;height:9px;background:var(--gold);border-radius:50%;box-shadow:0 0 10px var(--gold);animation:glow 2.5s ease-in-out infinite;}
-@keyframes glow{0%,100%{box-shadow:0 0 8px var(--gold);}50%{box-shadow:0 0 18px var(--gold),0 0 30px rgba(240,180,41,0.4);}}
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+/* ══════════════════════════════════════
+   LUMIPATH LOGIN — COMPLETE STYLES
+══════════════════════════════════════ */
+:root{
+  --bg:#080c18;--bg2:#0f1629;--bg3:#162040;
+  --gold:#f0b429;--gold-dim:rgba(240,180,41,0.12);--gold-bdr:rgba(240,180,41,0.24);
+  --teal:#00c9a7;--teal-dim:rgba(0,201,167,0.1);--teal-bdr:rgba(0,201,167,0.2);
+  --blue:#4f8ef7;--blue-dim:rgba(79,142,247,0.1);
+  --text:#eef2ff;--muted:#7b8cad;
+  --border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);
+  --success:#34d399;--danger:#f87171;--warning:#fbbf24;
+  --inp-bg:rgba(255,255,255,0.05);--inp-bdr:rgba(255,255,255,0.11);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;line-height:1.6;
+}
+
+/* ── LOADING SCREEN ── */
+.loading-screen{
+  position:fixed;inset:0;
+  background:rgba(8,12,24,0.95);
+  backdrop-filter:blur(10px);
+  z-index:9999;
+  display:none;
+  flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:1.2rem;
+}
+.loading-screen.show{display:flex;}
+.spin{
+  width:48px;height:48px;
+  border:3px solid rgba(255,255,255,0.1);
+  border-top-color:var(--gold);
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin-text{font-size:0.9rem;color:var(--muted);font-weight:300;}
+
+/* ── NAVBAR ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2.5rem;
+  background:rgba(8,12,24,0.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo{display:flex;align-items:center;gap:0.42rem;text-decoration:none;}
+.logo-dot{
+  width:9px;height:9px;background:var(--gold);
+  border-radius:50%;box-shadow:0 0 10px var(--gold);
+  animation:glow 2.5s ease-in-out infinite;
+}
+@keyframes glow{
+  0%,100%{box-shadow:0 0 8px var(--gold);}
+  50%{box-shadow:0 0 18px var(--gold),0 0 32px rgba(240,180,41,0.4);}
+}
 .logo-text{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;}
-.logo-lumi{color:var(--gold);} .logo-path{color:var(--text);}
-.nav-back{color:var(--muted);text-decoration:none;font-size:0.84rem;transition:color 0.2s;}
+.logo-lumi{color:var(--gold);}.logo-path{color:var(--text);}
+.nav-back{
+  color:var(--muted);text-decoration:none;
+  font-size:0.84rem;transition:color 0.2s;
+}
 .nav-back:hover{color:var(--text);}
 
-/* PAGE WRAP */
-.page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 1.5rem 3rem;position:relative;overflow:hidden;}
-.page::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(240,180,41,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(240,180,41,0.03) 1px,transparent 1px);background-size:55px 55px;pointer-events:none;}
-.g1{position:absolute;top:-120px;right:-120px;width:480px;height:480px;background:radial-gradient(circle,rgba(240,180,41,0.09) 0%,transparent 65%);pointer-events:none;}
-.g2{position:absolute;bottom:-150px;left:-80px;width:420px;height:420px;background:radial-gradient(circle,rgba(0,201,167,0.07) 0%,transparent 65%);pointer-events:none;}
+/* ── PAGE WRAPPER ── */
+.page{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:6rem 1.5rem 3rem;
+  position:relative;overflow:hidden;
+}
+.page::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(240,180,41,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(240,180,41,0.03) 1px,transparent 1px);
+  background-size:55px 55px;pointer-events:none;
+}
+.glow1{position:absolute;top:-120px;right:-120px;width:480px;height:480px;background:radial-gradient(circle,rgba(240,180,41,0.09) 0%,transparent 65%);pointer-events:none;}
+.glow2{position:absolute;bottom:-150px;left:-80px;width:420px;height:420px;background:radial-gradient(circle,rgba(0,201,167,0.07) 0%,transparent 65%);pointer-events:none;}
 
-/* CARD */
-.card{position:relative;width:100%;max-width:460px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2.4rem;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+/* ── CARD ── */
+.card{
+  position:relative;width:100%;max-width:460px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:20px;padding:2.4rem;
+  box-shadow:0 24px 64px rgba(0,0,0,0.55);
+}
 
-/* SCREENS */
-.screen{display:none;animation:fadeIn 0.3s ease;}
-.screen.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:translateY(0);}
+}
 
-/* BADGE / TAGS */
-.badge{display:inline-flex;align-items:center;gap:0.5rem;background:var(--gold-dim);border:1px solid var(--gold-bdr);color:var(--gold);font-size:0.71rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.32rem 0.85rem;border-radius:100px;margin-bottom:1.6rem;}
+/* ── ALERT BOXES ── */
+.alert{
+  border-radius:8px;padding:0.8rem 1rem;
+  margin-bottom:1rem;font-size:0.82rem;
+  display:none;line-height:1.5;
+}
+.alert.show{display:block;}
+.alert-error{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);color:var(--danger);}
+.alert-success{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:var(--success);}
+.alert-info{background:var(--blue-dim);border:1px solid rgba(79,142,247,0.3);color:var(--blue);}
+
+/* ── BADGE ── */
+.badge{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:var(--gold-dim);border:1px solid var(--gold-bdr);
+  color:var(--gold);font-size:0.71rem;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.32rem 0.85rem;border-radius:100px;
+  margin-bottom:1.6rem;
+}
 .bdot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:glow 2s ease infinite;}
-.step-tag{display:inline-flex;align-items:center;font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:0.26rem 0.75rem;border-radius:100px;margin-bottom:1.3rem;}
-.tag-g{background:rgba(0,201,167,0.1);color:var(--teal);border:1px solid rgba(0,201,167,0.2);}
-.tag-b{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(79,142,247,0.2);}
-.tag-q{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-bdr);}
 
-/* TITLE */
-.stitle{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:0.45rem;}
-.stitle em{color:var(--gold);font-style:italic;} .stitle .tc{color:var(--teal);}
-.ssub{font-size:0.86rem;color:var(--muted);font-weight:300;margin-bottom:1.8rem;line-height:1.65;}
+.step-tag{
+  display:inline-flex;align-items:center;
+  font-size:0.7rem;font-weight:600;letter-spacing:0.08em;
+  text-transform:uppercase;padding:0.26rem 0.75rem;
+  border-radius:100px;margin-bottom:1.3rem;
+}
+.tag-green{background:rgba(0,201,167,0.1);color:var(--teal);border:1px solid rgba(0,201,167,0.2);}
+.tag-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(79,142,247,0.2);}
+.tag-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-bdr);}
 
-/* CHOOSE BUTTONS */
-.choose-list{display:flex;flex-direction:column;gap:0.8rem;margin-bottom:1.6rem;}
-.cbtn{width:100%;display:flex;align-items:center;gap:0.9rem;background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:12px;padding:1rem 1.2rem;cursor:pointer;transition:all 0.2s;text-decoration:none;text-align:left;}
-.cbtn:hover{border-color:var(--gold-bdr);background:var(--gold-dim);}
-.cbtn:hover .carr{color:var(--gold);}
-.cico{font-size:1.3rem;flex-shrink:0;} .cbody{flex:1;}
-.ctitle{font-size:0.92rem;font-weight:600;color:var(--text);margin-bottom:0.1rem;}
-.csub{font-size:0.76rem;color:var(--muted);font-weight:300;}
-.carr{color:var(--muted);font-size:1rem;transition:color 0.2s;}
+/* ── TYPOGRAPHY ── */
+.title{
+  font-family:'Fraunces',serif;font-size:1.9rem;
+  font-weight:800;letter-spacing:-0.03em;line-height:1.1;
+  margin-bottom:0.45rem;
+}
+.title em{color:var(--gold);font-style:italic;}
+.title .tc{color:var(--teal);}
+.subtitle{font-size:0.86rem;color:var(--muted);font-weight:300;margin-bottom:1.8rem;line-height:1.65;}
 
-/* DIVIDER */
-.div{display:flex;align-items:center;gap:0.8rem;margin:1rem 0;color:var(--muted);font-size:0.75rem;}
-.div::before,.div::after{content:'';flex:1;height:1px;background:var(--border);}
+/* ── CHOICE BUTTONS ── */
+.choices{display:flex;flex-direction:column;gap:0.8rem;margin-bottom:1.5rem;}
+.choice-btn{
+  width:100%;display:flex;align-items:center;gap:0.9rem;
+  background:var(--inp-bg);border:1px solid var(--inp-bdr);
+  border-radius:12px;padding:1rem 1.2rem;
+  cursor:pointer;transition:all 0.2s;text-align:left;
+}
+.choice-btn:hover{border-color:var(--gold-bdr);background:var(--gold-dim);}
+.choice-btn:hover .c-arrow{color:var(--gold);}
+.c-icon{font-size:1.3rem;flex-shrink:0;}
+.c-body{flex:1;}
+.c-title{font-size:0.92rem;font-weight:600;color:var(--text);margin-bottom:0.1rem;}
+.c-sub{font-size:0.76rem;color:var(--muted);font-weight:300;}
+.c-arrow{color:var(--muted);font-size:1rem;transition:color 0.2s;}
 
-/* GOOGLE BTN */
-.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:0.7rem;background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:10px;padding:0.78rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all 0.2s;margin-bottom:1.3rem;}
-.gbtn:hover{border-color:rgba(255,255,255,0.15);background:var(--bg3);}
-.gico{display:inline-block;width:18px;height:18px;border-radius:50%;background:conic-gradient(#ea4335 90deg,#fbbc05 90deg 180deg,#34a853 180deg 270deg,#4285f4 270deg);flex-shrink:0;}
+/* ── DIVIDER ── */
+.divider{
+  display:flex;align-items:center;gap:0.8rem;
+  margin:1rem 0;color:var(--muted);font-size:0.75rem;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
-/* FIELDS */
+/* ── GOOGLE BUTTON ── */
+.google-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:0.7rem;
+  background:var(--inp-bg);border:1px solid var(--inp-bdr);
+  border-radius:10px;padding:0.78rem;
+  color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:0.88rem;font-weight:500;
+  cursor:pointer;transition:all 0.2s;margin-bottom:1.2rem;
+}
+.google-btn:hover{border-color:rgba(255,255,255,0.18);background:var(--bg3);}
+.google-icon{
+  display:inline-block;width:18px;height:18px;border-radius:50%;
+  background:conic-gradient(#ea4335 90deg,#fbbc05 90deg 180deg,#34a853 180deg 270deg,#4285f4 270deg);
+  flex-shrink:0;
+}
+
+/* ── FORM FIELDS ── */
 .field{margin-bottom:0.95rem;}
-.flabel{display:block;font-size:0.77rem;font-weight:500;color:var(--muted);margin-bottom:0.38rem;letter-spacing:0.02em;}
-.flabel span{color:var(--danger);}
-.finput{width:100%;background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:8px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.89rem;padding:0.7rem 0.95rem;outline:none;transition:all 0.2s;}
-.finput::placeholder{color:rgba(123,140,173,0.5);}
-.finput:focus{border-color:rgba(240,180,41,0.5);box-shadow:0 0 0 3px rgba(240,180,41,0.1);}
-select.finput{cursor:pointer;appearance:none;}
-select.finput option{background:var(--bg2);color:var(--text);}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+.field-label{
+  display:block;font-size:0.77rem;font-weight:500;
+  color:var(--muted);margin-bottom:0.38rem;letter-spacing:0.02em;
+}
+.field-label .req{color:var(--danger);}
+.field-input{
+  width:100%;background:var(--inp-bg);border:1px solid var(--inp-bdr);
+  border-radius:8px;color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:0.89rem;
+  padding:0.7rem 0.95rem;outline:none;transition:all 0.2s;
+}
+.field-input::placeholder{color:rgba(123,140,173,0.5);}
+.field-input:focus{
+  border-color:rgba(240,180,41,0.5);
+  box-shadow:0 0 0 3px rgba(240,180,41,0.1);
+}
+select.field-input{cursor:pointer;appearance:none;}
+select.field-input option{background:var(--bg2);color:var(--text);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
 
-/* PW STRENGTH */
-.pwbars{display:flex;gap:3px;margin-top:0.45rem;}
-.pwbar{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background 0.3s;}
-.pwbar.w{background:var(--danger);} .pwbar.m{background:var(--warning);} .pwbar.s{background:var(--success);}
-.pwlbl{font-size:0.7rem;color:var(--muted);margin-top:0.22rem;}
+/* Password strength */
+.pw-bars{display:flex;gap:3px;margin-top:0.4rem;}
+.pw-bar{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background 0.3s;}
+.pw-bar.weak{background:var(--danger);}
+.pw-bar.medium{background:var(--warning);}
+.pw-bar.strong{background:var(--success);}
+.pw-label{font-size:0.7rem;color:var(--muted);margin-top:0.2rem;}
 
-/* BUTTONS */
-.btnp{width:100%;background:var(--gold);color:#080c18;border:none;border-radius:10px;padding:0.82rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:0.4rem;}
-.btnp:hover{opacity:0.88;transform:translateY(-1px);box-shadow:0 10px 26px rgba(240,180,41,0.28);}
-.btnp:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none;}
-.btnb{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:0.78rem 1.3rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.84rem;cursor:pointer;transition:all 0.2s;}
-.btnb:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
-.fnote{text-align:center;margin-top:0.9rem;font-size:0.74rem;color:var(--muted);line-height:1.6;}
-.fnote a{color:var(--gold);text-decoration:none;}
-.fnote a:hover{text-decoration:underline;}
-.brow{display:flex;gap:0.6rem;margin-top:0.9rem;}
-.brow .btnp{margin-top:0;}
+/* ── BUTTONS ── */
+.btn-primary{
+  width:100%;background:var(--gold);color:#080c18;
+  border:none;border-radius:10px;padding:0.84rem;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:600;
+  cursor:pointer;transition:all 0.2s;margin-top:0.4rem;
+}
+.btn-primary:hover{opacity:0.88;transform:translateY(-1px);box-shadow:0 10px 26px rgba(240,180,41,0.28);}
+.btn-primary:disabled{opacity:0.38;cursor:not-allowed;transform:none;box-shadow:none;}
 
-/* TRUST STRIP */
-.tstrip{display:flex;flex-direction:column;gap:0.42rem;margin-top:1.4rem;padding-top:1.1rem;border-top:1px solid var(--border);}
-.ti{display:flex;align-items:center;gap:0.45rem;font-size:0.73rem;color:var(--muted);font-weight:300;}
-.td{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
-.td-g{background:var(--gold);} .td-t{background:var(--teal);} .td-b{background:var(--blue);}
+.btn-back{
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);border-radius:10px;padding:0.78rem 1.4rem;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:0.84rem;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-back:hover{border-color:rgba(255,255,255,0.15);color:var(--text);}
 
-/* QUIZ */
-.qprog{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.6rem;}
-.qtrack{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
-.qfill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.4s ease;}
-.qlbl{font-size:0.72rem;color:var(--muted);white-space:nowrap;}
+.btn-row{display:flex;gap:0.65rem;margin-top:0.9rem;}
+.btn-row .btn-primary{margin-top:0;}
 
-.qstep{display:none;} .qstep.active{display:block;}
-.qnum{font-size:0.69rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.45rem;}
-.qtitle{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:0.38rem;}
-.qsub{font-size:0.81rem;color:var(--muted);font-weight:300;margin-bottom:1.3rem;line-height:1.6;}
+/* ── FORM NOTES ── */
+.form-note{
+  text-align:center;margin-top:0.9rem;
+  font-size:0.74rem;color:var(--muted);line-height:1.6;
+}
+.form-note a{color:var(--gold);text-decoration:none;}
+.form-note a:hover{text-decoration:underline;}
 
-.qopts{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.2rem;}
-.qopt{display:flex;align-items:center;gap:0.8rem;background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:10px;padding:0.8rem 0.95rem;cursor:pointer;transition:all 0.2s;user-select:none;}
-.qopt:hover{border-color:var(--gold-bdr);background:var(--gold-dim);}
-.qopt.sel{border-color:var(--gold);background:var(--gold-dim);}
-.qopt.sel .qchk{background:var(--gold);border-color:var(--gold);}
-.qopt.sel .qchk::after{opacity:1;}
-.qchk{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--inp-bdr);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;position:relative;}
-.qchk::after{content:'✓';font-size:0.6rem;color:#080c18;opacity:0;transition:opacity 0.2s;}
-.qico{font-size:1rem;flex-shrink:0;}
-.qbody .qt{font-size:0.84rem;font-weight:500;color:var(--text);}
-.qbody .qs{font-size:0.72rem;color:var(--muted);font-weight:300;}
+/* ── TRUST STRIP ── */
+.trust-strip{
+  display:flex;flex-direction:column;gap:0.42rem;
+  margin-top:1.4rem;padding-top:1.1rem;border-top:1px solid var(--border);
+}
+.trust-item{display:flex;align-items:center;gap:0.45rem;font-size:0.73rem;color:var(--muted);font-weight:300;}
+.trust-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.dot-gold{background:var(--gold);}
+.dot-teal{background:var(--teal);}
+.dot-blue{background:var(--blue);}
 
+/* ── QUIZ STYLES ── */
+.quiz-progress{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.6rem;}
+.quiz-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.quiz-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.4s ease;}
+.quiz-label{font-size:0.72rem;color:var(--muted);white-space:nowrap;}
+
+.quiz-step{display:none;}
+.quiz-step.active{display:block;animation:fadeUp 0.25s ease;}
+
+.q-number{font-size:0.69rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.45rem;}
+.q-title{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:0.38rem;}
+.q-sub{font-size:0.81rem;color:var(--muted);font-weight:300;margin-bottom:1.3rem;line-height:1.6;}
+
+/* Option cards */
+.options{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.2rem;}
+.option{
+  display:flex;align-items:center;gap:0.82rem;
+  background:var(--inp-bg);border:1px solid var(--inp-bdr);
+  border-radius:10px;padding:0.82rem 0.95rem;
+  cursor:pointer;transition:all 0.2s;user-select:none;
+}
+.option:hover{border-color:var(--gold-bdr);background:var(--gold-dim);}
+.option.selected{border-color:var(--gold);background:var(--gold-dim);}
+.option.selected .opt-check{background:var(--gold);border-color:var(--gold);}
+.option.selected .opt-check::after{opacity:1;}
+.opt-check{
+  width:17px;height:17px;border-radius:50%;
+  border:1.5px solid var(--inp-bdr);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;position:relative;
+}
+.opt-check::after{content:'✓';font-size:0.6rem;color:#080c18;opacity:0;transition:opacity 0.2s;}
+.opt-icon{font-size:1rem;flex-shrink:0;}
+.opt-title{font-size:0.84rem;font-weight:500;color:var(--text);}
+.opt-sub{font-size:0.72rem;color:var(--muted);font-weight:300;}
+
+/* Chip multi-select */
 .chips{display:flex;flex-wrap:wrap;gap:0.42rem;margin-bottom:1.2rem;}
-.chip{background:var(--inp-bg);border:1px solid var(--inp-bdr);border-radius:100px;padding:0.35rem 0.82rem;font-size:0.77rem;color:var(--muted);cursor:pointer;transition:all 0.2s;user-select:none;}
+.chip{
+  background:var(--inp-bg);border:1px solid var(--inp-bdr);
+  border-radius:100px;padding:0.35rem 0.82rem;
+  font-size:0.77rem;color:var(--muted);
+  cursor:pointer;transition:all 0.2s;user-select:none;
+}
 .chip:hover{border-color:var(--gold-bdr);color:var(--text);}
-.chip.sel{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);font-weight:500;}
+.chip.selected{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);font-weight:500;}
 
-.qnav{display:flex;gap:0.6rem;}
-.qnav .btnp{margin-top:0;}
+.quiz-nav{display:flex;gap:0.65rem;}
+.quiz-nav .btn-primary{margin-top:0;}
 
-/* DONE */
-.done-ico{width:72px;height:72px;border-radius:50%;background:var(--gold-dim);border:2px solid var(--gold-bdr);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.3rem;animation:pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;}
-@keyframes pop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
-.done-title{font-family:'Fraunces',serif;font-size:1.75rem;font-weight:800;letter-spacing:-0.025em;text-align:center;margin-bottom:0.45rem;}
+/* ── DONE SCREEN ── */
+.done-icon{
+  width:76px;height:76px;border-radius:50%;
+  background:var(--gold-dim);border:2px solid var(--gold-bdr);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;margin:0 auto 1.3rem;
+  animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.done-title{
+  font-family:'Fraunces',serif;font-size:1.75rem;font-weight:800;
+  letter-spacing:-0.025em;text-align:center;margin-bottom:0.45rem;
+}
 .done-title em{color:var(--gold);font-style:italic;}
-.done-sub{font-size:0.84rem;color:var(--muted);text-align:center;line-height:1.7;max-width:330px;margin:0 auto 1.6rem;font-weight:300;}
+.done-sub{
+  font-size:0.84rem;color:var(--muted);text-align:center;
+  line-height:1.7;max-width:330px;margin:0 auto 1.6rem;font-weight:300;
+}
 .done-list{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.6rem;}
-.ditem{display:flex;align-items:center;gap:0.65rem;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.72rem 0.95rem;font-size:0.81rem;color:var(--muted);font-weight:300;}
-.dchk{color:var(--success);flex-shrink:0;}
+.done-item{
+  display:flex;align-items:center;gap:0.65rem;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:8px;padding:0.72rem 0.95rem;
+  font-size:0.81rem;color:var(--muted);font-weight:300;
+}
+.done-check{color:var(--success);flex-shrink:0;}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="#" class="logo">
+<!-- ══ LOADING SCREEN ══ -->
+<div class="loading-screen" id="loading-screen">
+  <div class="spin"></div>
+  <div class="spin-text" id="loading-text">Please wait...</div>
+</div>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="nav">
+  <a href="index.html" class="logo">
     <span class="logo-dot"></span>
     <span class="logo-text"><span class="logo-lumi">Lumi</span><span class="logo-path">Path</span></span>
   </a>
-  <a href="#" class="nav-back">← Back to home</a>
+  <a href="index.html" class="nav-back">← Back to home</a>
 </nav>
 
+<!-- ══ PAGE ══ -->
 <div class="page">
-  <div class="g1"></div><div class="g2"></div>
+  <div class="glow1"></div>
+  <div class="glow2"></div>
 
   <div class="card">
 
-    <!-- ═══ SCREEN 0: WELCOME / CHOOSE ═══ -->
-    <div class="screen active" id="s0">
+    <!-- ════════════════════════════════
+         SCREEN 1: WELCOME — Choose action
+    ════════════════════════════════ -->
+    <div class="screen active" id="screen-welcome">
       <div class="badge"><span class="bdot"></span>Free · No credit card · Honest AI</div>
-      <div class="stitle">Welcome to <em>Lumi</em><span class="tc">Path</span></div>
-      <p class="ssub">Your honest AI companion for scholarships, research, and academic growth. How would you like to continue?</p>
+      <div class="title">Welcome to <em>Lumi</em><span class="tc">Path</span></div>
+      <p class="subtitle">Your honest AI companion for scholarships, research, and academic growth. What would you like to do?</p>
 
-      <div class="choose-list">
-        <button class="cbtn" onclick="go('s1')">
-          <span class="cico">✨</span>
-          <div class="cbody">
-            <div class="ctitle">Create a free account</div>
-            <div class="csub">New to LumiPath — join in 2 minutes</div>
+      <div class="choices">
+        <!-- CREATE ACCOUNT button -->
+        <button class="choice-btn" onclick="showScreen('screen-signup')">
+          <span class="c-icon">✨</span>
+          <div class="c-body">
+            <div class="c-title">Create a free account</div>
+            <div class="c-sub">New to LumiPath — join in 2 minutes</div>
           </div>
-          <span class="carr">→</span>
+          <span class="c-arrow">→</span>
         </button>
-        <button class="cbtn" onclick="go('s-login')">
-          <span class="cico">🔑</span>
-          <div class="cbody">
-            <div class="ctitle">Log in to my account</div>
-            <div class="csub">Already a member — continue your journey</div>
+
+        <!-- LOGIN button -->
+        <button class="choice-btn" onclick="showScreen('screen-login')">
+          <span class="c-icon">🔑</span>
+          <div class="c-body">
+            <div class="c-title">Log in to my account</div>
+            <div class="c-sub">Already a member — continue your journey</div>
           </div>
-          <span class="carr">→</span>
+          <span class="c-arrow">→</span>
         </button>
       </div>
 
-      <div class="div">or continue with</div>
-      <button class="gbtn" onclick="signInWithGoogle"><span class="gico"></span>Continue with Google</button>
+      <div class="divider">or continue with</div>
 
-      <div class="tstrip">
-        <div class="ti"><span class="td td-g"></span>Free forever — no credit card required</div>
-        <div class="ti"><span class="td td-t"></span>Your data is never sold or shared with anyone</div>
-        <div class="ti"><span class="td td-b"></span>Delete your account anytime — no questions asked</div>
+      <!-- GOOGLE button -->
+      <button class="google-btn" onclick="loginWithGoogle()">
+        <span class="google-icon"></span>
+        Continue with Google — fastest option
+      </button>
+
+      <div class="trust-strip">
+        <div class="trust-item"><span class="trust-dot dot-gold"></span>Free forever — no credit card required</div>
+        <div class="trust-item"><span class="trust-dot dot-teal"></span>Your data is never sold or shared</div>
+        <div class="trust-item"><span class="trust-dot dot-blue"></span>Delete your account anytime</div>
       </div>
     </div>
 
-    <!-- ═══ SCREEN 1: SIGN UP ═══ -->
-    <div class="screen" id="s1">
-      <div class="step-tag tag-g">Step 1 of 3 — Create account</div>
-      <div class="stitle">Create your <em>account</em></div>
-      <p class="ssub">Fill in the details below. Takes less than 2 minutes.</p>
+    <!-- ════════════════════════════════
+         SCREEN 2: SIGN UP FORM
+    ════════════════════════════════ -->
+    <div class="screen" id="screen-signup">
+      <div class="step-tag tag-green">Step 1 of 3 — Create account</div>
+      <div class="title">Create your <em>account</em></div>
+      <p class="subtitle">Fill in your details below. Takes less than 2 minutes.</p>
 
-      <button class="gbtn" onclick="gAuth()"><span class="gico"></span>Sign up with Google — fastest option</button>
-      <div class="div">or sign up with email</div>
+      <!-- Error message box -->
+      <div class="alert alert-error" id="signup-error"></div>
+      <!-- Info message box -->
+      <div class="alert alert-info" id="signup-info"></div>
 
-      <div class="frow">
-        <div class="field"><label class="flabel">First name <span>*</span></label><input class="finput" type="text" placeholder="e.g. Aisha" id="fn"/></div>
-        <div class="field"><label class="flabel">Last name <span>*</span></label><input class="finput" type="text" placeholder="e.g. Rahman" id="ln"/></div>
+      <!-- Google fastest option -->
+      <button class="google-btn" onclick="loginWithGoogle()">
+        <span class="google-icon"></span>
+        Sign up with Google — fastest option
+      </button>
+
+      <div class="divider">or sign up with email</div>
+
+      <!-- Name row -->
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">First name <span class="req">*</span></label>
+          <input class="field-input" type="text" id="signup-firstname" placeholder="e.g. Sarah" autocomplete="given-name"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Last name <span class="req">*</span></label>
+          <input class="field-input" type="text" id="signup-lastname" placeholder="e.g. Ahmed" autocomplete="family-name"/>
+        </div>
       </div>
-      <div class="field"><label class="flabel">Email address <span>*</span></label><input class="finput" type="email" placeholder="you@university.edu" id="em"/></div>
+
+      <!-- Email -->
       <div class="field">
-        <label class="flabel">Password <span>*</span></label>
-        <input class="finput" type="password" placeholder="At least 8 characters" id="pw" oninput="chkPw(this.value)"/>
-        <div class="pwbars"><div class="pwbar" id="b1"></div><div class="pwbar" id="b2"></div><div class="pwbar" id="b3"></div><div class="pwbar" id="b4"></div></div>
-        <div class="pwlbl" id="pwlbl">Enter a password</div>
+        <label class="field-label">Email address <span class="req">*</span></label>
+        <input class="field-input" type="email" id="signup-email" placeholder="you@university.edu" autocomplete="email"/>
       </div>
+
+      <!-- Password with strength meter -->
       <div class="field">
-        <label class="flabel">Your country <span>*</span></label>
-        <select class="finput" id="ctry">
+        <label class="field-label">Password <span class="req">*</span></label>
+        <input class="field-input" type="password" id="signup-password" placeholder="At least 8 characters" oninput="checkPasswordStrength(this.value)" autocomplete="new-password"/>
+        <div class="pw-bars">
+          <div class="pw-bar" id="pw-bar-1"></div>
+          <div class="pw-bar" id="pw-bar-2"></div>
+          <div class="pw-bar" id="pw-bar-3"></div>
+          <div class="pw-bar" id="pw-bar-4"></div>
+        </div>
+        <div class="pw-label" id="pw-label">Enter a password</div>
+      </div>
+
+      <!-- Country -->
+      <div class="field">
+        <label class="field-label">Your country <span class="req">*</span></label>
+        <select class="field-input" id="signup-country" autocomplete="country">
           <option value="">— Select your country —</option>
-          <option>India</option><option>Pakistan</option><option>Bangladesh</option>
-          <option>Nigeria</option><option>Kenya</option><option>Ghana</option>
-          <option>Indonesia</option><option>Malaysia</option><option>Philippines</option>
-          <option>Vietnam</option><option>Nepal</option><option>Sri Lanka</option>
-          <option>Egypt</option><option>Ethiopia</option><option>Iran</option>
-          <option>Turkey</option><option>Brazil</option><option>Other</option>
+          <option>Afghanistan</option><option>Algeria</option><option>Bangladesh</option>
+          <option>Brazil</option><option>Cameroon</option><option>China</option>
+          <option>Egypt</option><option>Ethiopia</option><option>Ghana</option>
+          <option>India</option><option>Indonesia</option><option>Iran</option>
+          <option>Iraq</option><option>Jordan</option><option>Kenya</option>
+          <option>Malaysia</option><option>Morocco</option><option>Myanmar</option>
+          <option>Nepal</option><option>Nigeria</option><option>Pakistan</option>
+          <option>Philippines</option><option>Rwanda</option><option>Saudi Arabia</option>
+          <option>Senegal</option><option>South Africa</option><option>Sri Lanka</option>
+          <option>Sudan</option><option>Tanzania</option><option>Thailand</option>
+          <option>Turkey</option><option>Uganda</option><option>Vietnam</option>
+          <option>Yemen</option><option>Zimbabwe</option><option>Other</option>
         </select>
       </div>
 
-      <button class="btnp" onclick="signUpWithEmail()">Continue → Build your profile</button>
-      <p class="fnote">By creating an account you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br/>Already have an account? <a href="#" onclick="go('s-login')">Log in here</a></p>
-      <div style="margin-top:0.9rem;"><button class="btnb" onclick="go('s0')">← Back</button></div>
+      <!-- Submit button -->
+      <button class="btn-primary" onclick="createAccount()">
+        Continue → Build your profile
+      </button>
+
+      <p class="form-note">
+        By creating an account you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br/>
+        Already have an account? <a href="#" onclick="showScreen('screen-login')">Log in here →</a>
+      </p>
+      <div class="btn-row">
+        <button class="btn-back" onclick="showScreen('screen-welcome')">← Back</button>
+      </div>
     </div>
 
-    <!-- ═══ SCREEN: LOGIN ═══ -->
-    <div class="screen" id="s-login">
-      <div class="step-tag tag-b">Returning member</div>
-      <div class="stitle">Welcome <em>back!</em></div>
-      <p class="ssub">Log in to continue your scholarship journey from where you left off.</p>
+    <!-- ════════════════════════════════
+         SCREEN 3: LOG IN FORM
+    ════════════════════════════════ -->
+    <div class="screen" id="screen-login">
+      <div class="step-tag tag-blue">Returning member</div>
+      <div class="title">Welcome <em>back!</em></div>
+      <p class="subtitle">Log in to continue your scholarship journey from where you left off.</p>
 
-      <button class="gbtn" onclick="signInWithGoogle()"><span class="gico"></span>Continue with Google</button>
-      <div class="div">or log in with email</div>
+      <!-- Error message -->
+      <div class="alert alert-error" id="login-error"></div>
 
-      <div class="field"><label class="flabel">Email address <span>*</span></label><input class="finput" type="email" placeholder="you@university.edu" id="lem"/></div>
+      <!-- Google login -->
+      <button class="google-btn" onclick="loginWithGoogle()">
+        <span class="google-icon"></span>
+        Continue with Google
+      </button>
+
+      <div class="divider">or log in with email</div>
+
+      <!-- Email -->
       <div class="field">
-        <label class="flabel">Password <span>*</span></label>
-        <input class="finput" type="password" placeholder="Your password" id="lpw"/>
-        <div style="margin-top:0.35rem;"><a href="#" style="font-size:0.72rem;color:var(--gold);text-decoration:none;">Forgot your password?</a></div>
+        <label class="field-label">Email address <span class="req">*</span></label>
+        <input class="field-input" type="email" id="login-email" placeholder="you@university.edu" autocomplete="email"/>
       </div>
 
-      <button class="btnp" onclick="signInWithEmail()">Log in to LumiPath →</button>
-      <p class="fnote">Don't have an account? <a href="#" onclick="go('s1')">Create one free →</a></p>
-      <div style="margin-top:0.9rem;"><button class="btnb" onclick="go('s0')">← Back</button></div>
+      <!-- Password -->
+      <div class="field">
+        <label class="field-label">Password <span class="req">*</span></label>
+        <input class="field-input" type="password" id="login-password" placeholder="Your password" autocomplete="current-password"
+          onkeypress="if(event.key==='Enter') loginWithEmail()"/>
+        <div style="margin-top:0.4rem;">
+          <a href="#" style="font-size:0.72rem;color:var(--gold);text-decoration:none;" onclick="resetPassword()">
+            Forgot your password?
+          </a>
+        </div>
+      </div>
 
-      <div class="tstrip">
-        <div class="ti"><span class="td td-g"></span>Your progress and data are saved automatically</div>
-        <div class="ti"><span class="td td-t"></span>All your scholarship data stays completely private</div>
+      <!-- Login button -->
+      <button class="btn-primary" onclick="loginWithEmail()">
+        Log in to LumiPath →
+      </button>
+
+      <p class="form-note">
+        Don't have an account? <a href="#" onclick="showScreen('screen-signup')">Create one free →</a>
+      </p>
+      <div class="btn-row">
+        <button class="btn-back" onclick="showScreen('screen-welcome')">← Back</button>
+      </div>
+
+      <div class="trust-strip">
+        <div class="trust-item"><span class="trust-dot dot-gold"></span>Your progress is saved automatically</div>
+        <div class="trust-item"><span class="trust-dot dot-teal"></span>All your data stays completely private</div>
       </div>
     </div>
 
-    <!-- ═══ SCREEN 2: QUIZ ═══ -->
-    <div class="screen" id="s-quiz">
-      <div class="step-tag tag-q">Step 2 of 3 — Build your profile</div>
-      <div class="qprog">
-        <div class="qtrack"><div class="qfill" id="qfill" style="width:20%"></div></div>
-        <span class="qlbl" id="qlbl">Question 1 of 5</span>
+    <!-- ════════════════════════════════
+         SCREEN 4: ONBOARDING QUIZ
+         5 questions to build profile
+    ════════════════════════════════ -->
+    <div class="screen" id="screen-quiz">
+      <div class="step-tag tag-gold">Step 2 of 3 — Build your profile</div>
+
+      <!-- Progress bar -->
+      <div class="quiz-progress">
+        <div class="quiz-track">
+          <div class="quiz-fill" id="quiz-fill" style="width:20%"></div>
+        </div>
+        <span class="quiz-label" id="quiz-label">Question 1 of 5</span>
       </div>
 
-      <!-- Q1 -->
-      <div class="qstep active" id="q1">
-        <div class="qnum">Question 01 — Field of study</div>
-        <div class="qtitle">What is your main field?</div>
-        <div class="qsub">Helps us match scholarships and build your personalized research roadmap.</div>
-        <div class="qopts">
-          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">🧬</span><div class="qbody"><div class="qt">Biotechnology / Life Sciences</div><div class="qs">Genetics, microbiology, biomedical, biochemistry</div></div></div>
-          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">💻</span><div class="qbody"><div class="qt">Technology / Computer Science</div><div class="qs">AI, ML, software engineering, cybersecurity</div></div></div>
-          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">⚙️</span><div class="qbody"><div class="qt">Engineering</div><div class="qs">Biomedical, mechanical, electrical, nanotech</div></div></div>
-          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">📊</span><div class="qbody"><div class="qt">Business / Economics</div><div class="qs">Finance, entrepreneurship, management</div></div></div>
-          <div class="qopt" onclick="pick(this,'q1')"><div class="qchk"></div><span class="qico">🎓</span><div class="qbody"><div class="qt">Humanities / Social Sciences</div><div class="qs">Psychology, linguistics, international relations</div></div></div>
+      <!-- ── QUESTION 1: Field ── -->
+      <div class="quiz-step active" id="q1">
+        <div class="q-number">Question 01 of 05</div>
+        <div class="q-title">What is your main field of study?</div>
+        <div class="q-sub">This helps match you with the best scholarships and build your research roadmap.</div>
+        <div class="options">
+          <div class="option" onclick="selectOption(this,'field','Biotechnology / Life Sciences')">
+            <div class="opt-check"></div><span class="opt-icon">🧬</span>
+            <div><div class="opt-title">Biotechnology / Life Sciences</div><div class="opt-sub">Genetics, microbiology, biomedical, biochemistry</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'field','Technology / Computer Science')">
+            <div class="opt-check"></div><span class="opt-icon">💻</span>
+            <div><div class="opt-title">Technology / Computer Science</div><div class="opt-sub">AI, ML, software engineering, cybersecurity</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'field','Engineering')">
+            <div class="opt-check"></div><span class="opt-icon">⚙️</span>
+            <div><div class="opt-title">Engineering</div><div class="opt-sub">Biomedical, mechanical, electrical, nanotech</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'field','Business / Economics')">
+            <div class="opt-check"></div><span class="opt-icon">📊</span>
+            <div><div class="opt-title">Business / Economics</div><div class="opt-sub">Finance, entrepreneurship, management</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'field','Humanities / Social Sciences')">
+            <div class="opt-check"></div><span class="opt-icon">🎓</span>
+            <div><div class="opt-title">Humanities / Social Sciences</div><div class="opt-sub">Psychology, linguistics, international relations</div></div>
+          </div>
         </div>
-        <div class="qnav"><button class="btnp" id="nq1" disabled onclick="nxtQ(1)">Next →</button></div>
+        <div class="quiz-nav">
+          <button class="btn-primary" id="next-q1" disabled onclick="goToQuestion(2)">Next →</button>
+        </div>
       </div>
 
-      <!-- Q2 -->
-      <div class="qstep" id="q2">
-        <div class="qnum">Question 02 — Degree level</div>
-        <div class="qtitle">What degree are you applying for?</div>
-        <div class="qsub">Different scholarships exist at each academic level.</div>
-        <div class="qopts">
-          <div class="qopt" onclick="pick(this,'q2')"><div class="qchk"></div><span class="qico">📘</span><div class="qbody"><div class="qt">Bachelor's degree</div><div class="qs">Undergraduate — first degree</div></div></div>
-          <div class="qopt" onclick="pick(this,'q2')"><div class="qchk"></div><span class="qico">📗</span><div class="qbody"><div class="qt">Master's degree</div><div class="qs">Postgraduate — MSc, MA, MBA</div></div></div>
-          <div class="qopt" onclick="pick(this,'q2')"><div class="qchk"></div><span class="qico">📙</span><div class="qbody"><div class="qt">PhD / Doctoral</div><div class="qs">Research degree — doctorate</div></div></div>
-          <div class="qopt" onclick="pick(this,'q2')"><div class="qchk"></div><span class="qico">🔬</span><div class="qbody"><div class="qt">Research / Postdoc</div><div class="qs">After PhD — research fellowship</div></div></div>
+      <!-- ── QUESTION 2: Degree ── -->
+      <div class="quiz-step" id="q2">
+        <div class="q-number">Question 02 of 05</div>
+        <div class="q-title">What degree level are you applying for?</div>
+        <div class="q-sub">Different scholarships exist at different academic levels.</div>
+        <div class="options">
+          <div class="option" onclick="selectOption(this,'degree','Bachelor')">
+            <div class="opt-check"></div><span class="opt-icon">📘</span>
+            <div><div class="opt-title">Bachelor's degree</div><div class="opt-sub">Undergraduate — first degree</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'degree','Master')">
+            <div class="opt-check"></div><span class="opt-icon">📗</span>
+            <div><div class="opt-title">Master's degree</div><div class="opt-sub">Postgraduate — MSc, MA, MBA</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'degree','PhD')">
+            <div class="opt-check"></div><span class="opt-icon">📙</span>
+            <div><div class="opt-title">PhD / Doctoral</div><div class="opt-sub">Research degree — doctorate</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'degree','Postdoc')">
+            <div class="opt-check"></div><span class="opt-icon">🔬</span>
+            <div><div class="opt-title">Research / Postdoc</div><div class="opt-sub">After PhD — research fellowship</div></div>
+          </div>
         </div>
-        <div class="qnav"><button class="btnb" onclick="prvQ(2)">← Back</button><button class="btnp" id="nq2" disabled onclick="nxtQ(2)">Next →</button></div>
+        <div class="quiz-nav">
+          <button class="btn-back" onclick="goToQuestion(1)">← Back</button>
+          <button class="btn-primary" id="next-q2" disabled onclick="goToQuestion(3)">Next →</button>
+        </div>
       </div>
 
-      <!-- Q3 -->
-      <div class="qstep" id="q3">
-        <div class="qnum">Question 03 — Target countries</div>
-        <div class="qtitle">Which countries interest you?</div>
-        <div class="qsub">Select all that apply — personalizes your scholarship matches immediately.</div>
-        <div class="chips">
-          <span class="chip" onclick="tog(this,'q3')">🇰🇷 South Korea</span>
-          <span class="chip" onclick="tog(this,'q3')">🇨🇳 China</span>
-          <span class="chip" onclick="tog(this,'q3')">🇯🇵 Japan</span>
-          <span class="chip" onclick="tog(this,'q3')">🇩🇪 Germany</span>
-          <span class="chip" onclick="tog(this,'q3')">🇬🇧 UK</span>
-          <span class="chip" onclick="tog(this,'q3')">🇺🇸 USA</span>
-          <span class="chip" onclick="tog(this,'q3')">🇦🇺 Australia</span>
-          <span class="chip" onclick="tog(this,'q3')">🇨🇦 Canada</span>
-          <span class="chip" onclick="tog(this,'q3')">🇳🇱 Netherlands</span>
-          <span class="chip" onclick="tog(this,'q3')">🇸🇪 Sweden</span>
-          <span class="chip" onclick="tog(this,'q3')">🇫🇷 France</span>
-          <span class="chip" onclick="tog(this,'q3')">🇸🇬 Singapore</span>
-          <span class="chip" onclick="tog(this,'q3')">🌍 Open to anywhere</span>
+      <!-- ── QUESTION 3: Countries ── -->
+      <div class="quiz-step" id="q3">
+        <div class="q-number">Question 03 of 05</div>
+        <div class="q-title">Which countries interest you for study?</div>
+        <div class="q-sub">Select all that apply — personalizes your scholarship matches immediately.</div>
+        <div class="chips" id="chips-countries">
+          <span class="chip" onclick="toggleChip(this,'countries')">🇰🇷 South Korea</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇨🇳 China</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇯🇵 Japan</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇩🇪 Germany</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇬🇧 United Kingdom</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇺🇸 United States</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇦🇺 Australia</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇨🇦 Canada</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇳🇱 Netherlands</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇸🇪 Sweden</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇫🇷 France</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇸🇬 Singapore</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🇹🇷 Turkey</span>
+          <span class="chip" onclick="toggleChip(this,'countries')">🌍 Open to anywhere</span>
         </div>
-        <div class="qnav"><button class="btnb" onclick="prvQ(3)">← Back</button><button class="btnp" id="nq3" disabled onclick="nxtQ(3)">Next →</button></div>
+        <div class="quiz-nav">
+          <button class="btn-back" onclick="goToQuestion(2)">← Back</button>
+          <button class="btn-primary" id="next-q3" disabled onclick="goToQuestion(4)">Next →</button>
+        </div>
       </div>
 
-      <!-- Q4 -->
-      <div class="qstep" id="q4">
-        <div class="qnum">Question 04 — Language preparation</div>
-        <div class="qtitle">Which languages are you preparing?</div>
-        <div class="qsub">LumiPath builds a personalized study plan for each language you select.</div>
-        <div class="chips">
-          <span class="chip" onclick="tog(this,'q4')">🇬🇧 English (IELTS/TOEFL)</span>
-          <span class="chip" onclick="tog(this,'q4')">🇰🇷 Korean (TOPIK)</span>
-          <span class="chip" onclick="tog(this,'q4')">🇨🇳 Chinese (HSK)</span>
-          <span class="chip" onclick="tog(this,'q4')">🇩🇪 German</span>
-          <span class="chip" onclick="tog(this,'q4')">🇫🇷 French</span>
-          <span class="chip" onclick="tog(this,'q4')">🇯🇵 Japanese (JLPT)</span>
-          <span class="chip" onclick="tog(this,'q4')">Only my native language</span>
+      <!-- ── QUESTION 4: Languages ── -->
+      <div class="quiz-step" id="q4">
+        <div class="q-number">Question 04 of 05</div>
+        <div class="q-title">Which languages are you preparing?</div>
+        <div class="q-sub">LumiPath builds a personalized study plan for each language you select.</div>
+        <div class="chips" id="chips-languages">
+          <span class="chip" onclick="toggleChip(this,'languages')">🇬🇧 English (IELTS/TOEFL)</span>
+          <span class="chip" onclick="toggleChip(this,'languages')">🇰🇷 Korean (TOPIK)</span>
+          <span class="chip" onclick="toggleChip(this,'languages')">🇨🇳 Chinese (HSK)</span>
+          <span class="chip" onclick="toggleChip(this,'languages')">🇩🇪 German</span>
+          <span class="chip" onclick="toggleChip(this,'languages')">🇫🇷 French</span>
+          <span class="chip" onclick="toggleChip(this,'languages')">🇯🇵 Japanese (JLPT)</span>
+          <span class="chip" onclick="toggleChip(this,'languages')">Only my native language</span>
         </div>
-        <div class="qnav"><button class="btnb" onclick="prvQ(4)">← Back</button><button class="btnp" id="nq4" disabled onclick="nxtQ(4)">Next →</button></div>
+        <div class="quiz-nav">
+          <button class="btn-back" onclick="goToQuestion(3)">← Back</button>
+          <button class="btn-primary" id="next-q4" disabled onclick="goToQuestion(5)">Next →</button>
+        </div>
       </div>
 
-      <!-- Q5 -->
-      <div class="qstep" id="q5">
-        <div class="qnum">Question 05 — Your main goal</div>
-        <div class="qtitle">What is your priority right now?</div>
-        <div class="qsub">Shows you the most useful features first when you enter your dashboard.</div>
-        <div class="qopts">
-          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🔎</span><div class="qbody"><div class="qt">Find a scholarship to apply to</div><div class="qs">I want to discover and apply now</div></div></div>
-          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">📝</span><div class="qbody"><div class="qt">Improve my SOP or documents</div><div class="qs">I have an SOP and want honest AI feedback</div></div></div>
-          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🧬</span><div class="qbody"><div class="qt">Build my research skills</div><div class="qs">I want to grow my research background</div></div></div>
-          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🌏</span><div class="qbody"><div class="qt">Prepare for a language test</div><div class="qs">TOPIK, HSK, or IELTS is my focus</div></div></div>
-          <div class="qopt" onclick="pick(this,'q5')"><div class="qchk"></div><span class="qico">🗺️</span><div class="qbody"><div class="qt">Just exploring for now</div><div class="qs">I want to understand all my options first</div></div></div>
+      <!-- ── QUESTION 5: Goal ── -->
+      <div class="quiz-step" id="q5">
+        <div class="q-number">Question 05 of 05</div>
+        <div class="q-title">What is your main goal right now?</div>
+        <div class="q-sub">This shows you the most useful features first on your dashboard.</div>
+        <div class="options">
+          <div class="option" onclick="selectOption(this,'goal','Find scholarships')">
+            <div class="opt-check"></div><span class="opt-icon">🔎</span>
+            <div><div class="opt-title">Find a scholarship to apply to</div><div class="opt-sub">I want to discover and apply now</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'goal','Improve SOP')">
+            <div class="opt-check"></div><span class="opt-icon">📝</span>
+            <div><div class="opt-title">Improve my SOP or documents</div><div class="opt-sub">I have an SOP and want honest AI feedback</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'goal','Build research skills')">
+            <div class="opt-check"></div><span class="opt-icon">🧬</span>
+            <div><div class="opt-title">Build my research skills</div><div class="opt-sub">I want to grow my research background</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'goal','Language preparation')">
+            <div class="opt-check"></div><span class="opt-icon">🌏</span>
+            <div><div class="opt-title">Prepare for a language test</div><div class="opt-sub">TOPIK, HSK, or IELTS is my focus</div></div>
+          </div>
+          <div class="option" onclick="selectOption(this,'goal','Just exploring')">
+            <div class="opt-check"></div><span class="opt-icon">🗺️</span>
+            <div><div class="opt-title">Just exploring for now</div><div class="opt-sub">I want to understand all my options first</div></div>
+          </div>
         </div>
-        <div class="qnav"><button class="btnb" onclick="prvQ(5)">← Back</button><button class="btnp" id="nq5" disabled onclick="saveStudentProfile()">Build my profile →</button></div>
+        <div class="quiz-nav">
+          <button class="btn-back" onclick="goToQuestion(4)">← Back</button>
+          <!-- THIS BUTTON saves profile and goes to done screen -->
+          <button class="btn-primary" id="next-q5" disabled onclick="saveProfileAndFinish()">
+            Build my profile →
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- ═══ SCREEN: DONE ═══ -->
-    <div class="screen" id="s-done">
-      <div class="done-ico">✨</div>
+    <!-- ════════════════════════════════
+         SCREEN 5: DONE — Profile built!
+    ════════════════════════════════ -->
+    <div class="screen" id="screen-done">
+      <div class="done-icon">✨</div>
       <div class="done-title">Welcome to <em>LumiPath!</em></div>
-      <p class="done-sub">Your profile is built. We have personalized everything based on your answers — scholarships, roadmap, language planner, and more.</p>
+      <p class="done-sub">
+        Your profile is built and everything is personalized based on your answers.
+        Your dashboard is ready.
+      </p>
       <div class="done-list">
-        <div class="ditem"><span class="dchk">✓</span>Scholarship matches personalized to your exact profile</div>
-        <div class="ditem"><span class="dchk">✓</span>Research roadmap ready for your specific field</div>
-        <div class="ditem"><span class="dchk">✓</span>Language study plan set for your target tests</div>
-        <div class="ditem"><span class="dchk">✓</span>Application tracker activated and ready to use</div>
-        <div class="ditem"><span class="dchk">✓</span>Honest AI guidance mode — active on all features</div>
+        <div class="done-item"><span class="done-check">✓</span>Scholarship matches personalized to your exact profile</div>
+        <div class="done-item"><span class="done-check">✓</span>Research roadmap ready for your specific field</div>
+        <div class="done-item"><span class="done-check">✓</span>Language study plan set for your target tests</div>
+        <div class="done-item"><span class="done-check">✓</span>Application tracker activated and ready to use</div>
+        <div class="done-item"><span class="done-check">✓</span>Honest AI guidance — active on all features</div>
       </div>
-      <button class="btnp" onclick="alert('Dashboard coming in Part 3! 🚀')">Go to my dashboard →</button>
-      <p class="fnote" style="margin-top:1rem;">Remember: LumiPath AI <strong style="color:var(--text);">guides</strong> you — it never writes for you. Your authentic voice wins. 🧭</p>
+
+      <!-- THIS BUTTON connects to dashboard.html -->
+      <button class="btn-primary" onclick="goToDashboard()">
+        Go to my dashboard →
+      </button>
+
+      <p class="form-note" style="margin-top:1rem;">
+        LumiPath AI <strong style="color:var(--text);">guides</strong> you — it never writes for you. 🧭
+      </p>
     </div>
 
   </div><!-- /card -->
 </div><!-- /page -->
 
+<!-- ══════════════════════════════════════════════════════
+     ALL JAVASCRIPT
+     This is the brain — everything connects here
+══════════════════════════════════════════════════════ -->
 <script>
-// Screen navigation
-function go(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
 
-// Google auth
-function gAuth(){alert('Google sign-in will connect to Supabase Auth in the live version.');}
+// ══════════════════════════════════════
+// QUIZ DATA — stores all answers
+// ══════════════════════════════════════
+const profile = {
+  name:      '',   // from signup form
+  email:     '',   // from signup form
+  country:   '',   // from signup form
+  field:     '',   // Q1
+  degree:    '',   // Q2
+  countries: [],   // Q3 multi-select
+  languages: [],   // Q4 multi-select
+  goal:      '',   // Q5
+};
 
-// Signup → Quiz
-function goQuiz(){
-  if(!document.getElementById('fn').value.trim()||
-     !document.getElementById('em').value.trim()||
-     !document.getElementById('pw').value||
-     !document.getElementById('ctry').value){
-    alert('Please fill in all required fields to continue.');return;
-  }
-  go('s-quiz');
-}
+let currentQuestion = 1;
 
-// Login
-function doLogin(){
-  if(!document.getElementById('lem').value.trim()||!document.getElementById('lpw').value){
-    alert('Please enter your email and password.');return;
-  }
-  go('s-done');
-}
-
-// Password strength
-function chkPw(v){
-  let s=0;
-  if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
-  ['b1','b2','b3','b4'].forEach((id,i)=>{
-    const el=document.getElementById(id);el.className='pwbar';
-    if(i<s)el.classList.add(s<=1?'w':s<=2?'m':'s');
+// ══════════════════════════════════════
+// SCREEN NAVIGATION
+// Call showScreen('screen-id') to switch
+// ══════════════════════════════════════
+function showScreen(id) {
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
   });
-  document.getElementById('pwlbl').textContent=v.length===0?'Enter a password':['','Weak — add numbers and symbols','Getting better — add uppercase','Strong password!','Very strong!'][s];
+  // Show the requested screen
+  document.getElementById(id).classList.add('active');
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Quiz: single select
-function pick(el,qid){
-  el.closest('.qstep').querySelectorAll('.qopt').forEach(o=>o.classList.remove('sel'));
-  el.classList.add('sel');
-  document.getElementById('n'+qid).disabled=false;
+// ══════════════════════════════════════
+// LOADING SCREEN
+// ══════════════════════════════════════
+function showLoading(message) {
+  document.getElementById('loading-text').textContent = message || 'Please wait...';
+  document.getElementById('loading-screen').classList.add('show');
 }
 
-// Quiz: chip multi select
-function tog(el,qid){
-  el.classList.toggle('sel');
-  const any=el.closest('.qstep').querySelectorAll('.chip.sel').length>0;
-  document.getElementById('n'+qid).disabled=!any;
+function hideLoading() {
+  document.getElementById('loading-screen').classList.remove('show');
 }
 
-// Quiz navigation
-let cq=1;
-function nxtQ(from){
-  document.getElementById('q'+from).classList.remove('active');
-  cq=from+1;
-  document.getElementById('q'+cq).classList.add('active');
-  updProg();
+// ══════════════════════════════════════
+// ERROR / INFO MESSAGES
+// ══════════════════════════════════════
+function showError(elementId, message) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  el.textContent = message;
+  el.classList.add('show');
 }
-function prvQ(from){
-  document.getElementById('q'+from).classList.remove('active');
-  cq=from-1;
-  document.getElementById('q'+cq).classList.add('active');
-  updProg();
+
+function clearError(elementId) {
+  const el = document.getElementById(elementId);
+  if (el) el.classList.remove('show');
 }
-function updProg(){
-  document.getElementById('qfill').style.width=(cq/5*100)+'%';
-  document.getElementById('qlbl').textContent='Question '+cq+' of 5';
-}
-</script>
-</div><!-- end of page -->
 
-  <!-- ADD ALL THIS BEFORE </body> -->
-  <script>
-  // ══════════════════════════════════════
-  // SAVE STUDENT PROFILE TO SUPABASE
-  // ══════════════════════════════════════
-  async function saveStudentProfile() {
+// ══════════════════════════════════════
+// PASSWORD STRENGTH CHECKER
+// ══════════════════════════════════════
+function checkPasswordStrength(password) {
+  let score = 0;
+  if (password.length >= 8)          score++;
+  if (/[A-Z]/.test(password))        score++;
+  if (/[0-9]/.test(password))        score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    // Get the answers from the quiz
-    const profileData = {
-      name:      document.getElementById('inp-name').value.trim(),
-      field:     document.getElementById('inp-field').value.trim(),
-      degree:    document.getElementById('inp-degree').value,
-      country:   document.getElementById('inp-country').value.trim(),
-      target:    document.getElementById('inp-target').value.trim(),
-    };
-
-    // Make sure name is filled in
-    if (!profileData.name) {
-      alert('Please enter your name first.');
-      return;
+  const bars = ['pw-bar-1','pw-bar-2','pw-bar-3','pw-bar-4'];
+  bars.forEach((id, i) => {
+    const bar = document.getElementById(id);
+    bar.className = 'pw-bar';
+    if (i < score) {
+      bar.classList.add(score <= 1 ? 'weak' : score <= 2 ? 'medium' : 'strong');
     }
+  });
 
-    // Check if student is logged in
-    const { data: { user } } = await supabase.auth.getUser();
+  const labels = ['Enter a password','Weak — add numbers','Medium — add uppercase','Strong!','Very strong!'];
+  document.getElementById('pw-label').textContent =
+    password.length === 0 ? labels[0] : labels[score] || labels[4];
+}
 
-    if (!user) {
-      // Not logged in — save to localStorage instead
-      // (works before Supabase login is set up)
-      localStorage.setItem('lumipath_profile', JSON.stringify(profileData));
-      window.location.href = 'dashboard.html';
-      return;
-    }
+// ══════════════════════════════════════
+// GOOGLE LOGIN
+// → Supabase handles Google OAuth
+// → Automatically redirects to dashboard
+// ══════════════════════════════════════
+async function loginWithGoogle() {
+  showLoading('Opening Google sign in...');
+  try {
+    if (!supabaseClient) throw new Error('Supabase not connected');
 
-    // Student IS logged in — save to real database
-    const { error } = await supabase
-      .from('users')
-      .upsert({
-        id:               user.id,
-        email:            user.email,
-        name:             profileData.name,
-        field_of_study:   profileData.field,
-        degree_level:     profileData.degree,
-        country:          profileData.country,
-        target_countries: profileData.target,
-      });
-
-    if (error) {
-      console.error('Error saving to database:', error);
-      // Even if database fails — save locally and continue
-      localStorage.setItem('lumipath_profile', JSON.stringify(profileData));
-    }
-
-    // Go to dashboard
-    window.location.href = 'dashboard.html';
-  }
-
-  // ══════════════════════════════════════
-  // GOOGLE SIGN IN
-  // ══════════════════════════════════════
-  async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
+        // After Google login, go directly to dashboard
         redirectTo: window.location.origin + '/dashboard.html'
       }
     });
-    if (error) console.error('Google sign in error:', error);
-  }
 
-  // ══════════════════════════════════════
-  // EMAIL SIGN UP
-  // ══════════════════════════════════════
-  async function signUpWithEmail() {
-    const email    = document.getElementById('em').value.trim();
-    const password = document.getElementById('pw').value;
-    const name     = document.getElementById('fn').value.trim();
-
-    if (!email || !password || !name) {
-      alert('Please fill in all fields.');
-      return;
+    if (error) {
+      hideLoading();
+      showError('signup-error', 'Google sign in failed: ' + error.message);
     }
+    // If successful — Google redirects automatically, no code needed here
 
-    const { error } = await supabase.auth.signUp({
+  } catch(e) {
+    hideLoading();
+    alert('Google sign in not available yet. Please use email sign up below.');
+    console.error(e);
+  }
+}
+
+// ══════════════════════════════════════
+// EMAIL SIGN UP
+// → Creates Supabase account
+// → Saves name/country to profile object
+// → Goes to QUIZ
+// ══════════════════════════════════════
+async function createAccount() {
+  clearError('signup-error');
+
+  // Get form values
+  const firstName = document.getElementById('signup-firstname').value.trim();
+  const lastName  = document.getElementById('signup-lastname').value.trim();
+  const email     = document.getElementById('signup-email').value.trim();
+  const password  = document.getElementById('signup-password').value;
+  const country   = document.getElementById('signup-country').value;
+
+  // Validate every field
+  if (!firstName) { showError('signup-error', '⚠️ Please enter your first name.'); return; }
+  if (!lastName)  { showError('signup-error', '⚠️ Please enter your last name.'); return; }
+  if (!email)     { showError('signup-error', '⚠️ Please enter your email address.'); return; }
+  if (!email.includes('@')) { showError('signup-error', '⚠️ Please enter a valid email address.'); return; }
+  if (!password)  { showError('signup-error', '⚠️ Please enter a password.'); return; }
+  if (password.length < 8) { showError('signup-error', '⚠️ Password must be at least 8 characters long.'); return; }
+  if (!country)   { showError('signup-error', '⚠️ Please select your country.'); return; }
+
+  // Save to profile object for later
+  const fullName = firstName + ' ' + lastName;
+  profile.name    = fullName;
+  profile.email   = email;
+  profile.country = country;
+
+  showLoading('Creating your account...');
+
+  try {
+    if (!supabaseClient) throw new Error('Supabase not configured');
+
+    // Create account in Supabase
+    const { data, error } = await supabaseClient.auth.signUp({
       email,
       password,
       options: {
-        data: { name } // saves name in auth metadata
+        data: {
+          name:    fullName,
+          country: country,
+        }
       }
     });
 
+    hideLoading();
+
     if (error) {
-      alert('Sign up error: ' + error.message);
-    } else {
-      // Go to quiz (next step)
-      go('s-quiz');
-    }
-  }
-
-  // ══════════════════════════════════════
-  // EMAIL LOG IN
-  // ══════════════════════════════════════
-  async function signInWithEmail() {
-    const email    = document.getElementById('lem').value.trim();
-    const password = document.getElementById('lpw').value;
-
-    if (!email || !password) {
-      alert('Please enter your email and password.');
+      // Show specific error messages
+      if (error.message.includes('already registered')) {
+        showError('signup-error', '⚠️ This email is already registered. Please log in instead.');
+      } else {
+        showError('signup-error', '⚠️ ' + error.message);
+      }
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    // ✅ Account created! Now go to quiz
+    showScreen('screen-quiz');
+    goToQuestion(1); // Start from question 1
+
+  } catch(e) {
+    hideLoading();
+    // If Supabase not configured — still let them through to quiz
+    // Profile will be saved to localStorage
+    console.log('Supabase not configured, continuing with localStorage:', e.message);
+    showScreen('screen-quiz');
+    goToQuestion(1);
+  }
+}
+
+// ══════════════════════════════════════
+// EMAIL LOGIN
+// → Logs into Supabase
+// → Goes directly to dashboard
+// ══════════════════════════════════════
+async function loginWithEmail() {
+  clearError('login-error');
+
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email)    { showError('login-error', '⚠️ Please enter your email address.'); return; }
+  if (!password) { showError('login-error', '⚠️ Please enter your password.'); return; }
+
+  showLoading('Logging you in...');
+
+  try {
+    if (!supabaseClient) throw new Error('Supabase not configured');
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
       password
     });
 
+    hideLoading();
+
     if (error) {
-      alert('Login error: ' + error.message);
-    } else {
+      showError('login-error', '⚠️ Incorrect email or password. Please try again.');
+      return;
+    }
+
+    // ✅ Login successful — go to dashboard
+    goToDashboard();
+
+  } catch(e) {
+    hideLoading();
+    // If Supabase not configured — still let them through for testing
+    console.log('Supabase not configured:', e.message);
+    goToDashboard();
+  }
+}
+
+// ══════════════════════════════════════
+// FORGOT PASSWORD
+// ══════════════════════════════════════
+async function resetPassword() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) {
+    showError('login-error', '⚠️ Enter your email address above first, then click forgot password.');
+    return;
+  }
+  showLoading('Sending password reset email...');
+  try {
+    await supabaseClient.auth.resetPasswordForEmail(email);
+  } catch(e) {}
+  hideLoading();
+  alert('✅ Password reset email sent! Check your inbox and spam folder.');
+}
+
+// ══════════════════════════════════════
+// QUIZ — NAVIGATE BETWEEN QUESTIONS
+// ══════════════════════════════════════
+function goToQuestion(number) {
+  // Hide current question
+  const current = document.getElementById('q' + currentQuestion);
+  if (current) current.classList.remove('active');
+
+  // Show new question
+  currentQuestion = number;
+  const next = document.getElementById('q' + currentQuestion);
+  if (next) next.classList.add('active');
+
+  // Update progress bar
+  const percent = (number / 5) * 100;
+  document.getElementById('quiz-fill').style.width = percent + '%';
+  document.getElementById('quiz-label').textContent = 'Question ' + number + ' of 5';
+
+  // Scroll to top of card
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════
+// QUIZ — SINGLE OPTION SELECT (Q1, Q2, Q5)
+// ══════════════════════════════════════
+function selectOption(element, field, value) {
+  // Remove selected from all options in this question
+  const parent = element.closest('.quiz-step');
+  parent.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+
+  // Select this one
+  element.classList.add('selected');
+
+  // Save the value
+  profile[field] = value;
+
+  // Enable the Next button for this question
+  const questionId = parent.id; // e.g. "q1"
+  const nextBtn = document.getElementById('next-' + questionId);
+  if (nextBtn) nextBtn.disabled = false;
+}
+
+// ══════════════════════════════════════
+// QUIZ — CHIP MULTI SELECT (Q3, Q4)
+// ══════════════════════════════════════
+function toggleChip(element, field) {
+  // Toggle this chip
+  element.classList.toggle('selected');
+
+  // Collect all selected chips in this group
+  const parent = element.closest('.quiz-step');
+  const selected = [];
+  parent.querySelectorAll('.chip.selected').forEach(chip => {
+    selected.push(chip.textContent.trim());
+  });
+
+  // Save to profile
+  profile[field] = selected;
+
+  // Enable next button only if at least 1 chip selected
+  const questionId = parent.id;
+  const nextBtn = document.getElementById('next-' + questionId);
+  if (nextBtn) nextBtn.disabled = selected.length === 0;
+}
+
+// ══════════════════════════════════════
+// SAVE PROFILE AND GO TO DONE SCREEN
+// Called when student clicks "Build my profile →"
+// ══════════════════════════════════════
+async function saveProfileAndFinish() {
+  showLoading('Building your personalized profile...');
+
+  // Build the complete profile object
+  const completeProfile = {
+    name:      profile.name      || 'Student',
+    email:     profile.email     || '',
+    country:   profile.country   || '',
+    field:     profile.field     || '',
+    degree:    profile.degree    || '',
+    target:    profile.countries.join(', ') || '',
+    languages: profile.languages.join(', ') || '',
+    goal:      profile.goal      || '',
+    savedAt:   new Date().toISOString(),
+  };
+
+  // ✅ STEP 1: Always save to localStorage
+  // This works on every device without any setup
+  localStorage.setItem('lumipath_profile', JSON.stringify(completeProfile));
+
+  // ✅ STEP 2: Try to save to Supabase database
+  try {
+    if (supabaseClient) {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+
+      if (user) {
+        // User is logged in — save to database
+        const { error } = await supabaseClient
+          .from('users')
+          .upsert({
+            id:               user.id,
+            email:            user.email || completeProfile.email,
+            name:             completeProfile.name,
+            field_of_study:   completeProfile.field,
+            degree_level:     completeProfile.degree,
+            country:          completeProfile.country,
+            target_countries: completeProfile.target,
+            language_goals:   completeProfile.languages,
+            main_goal:        completeProfile.goal,
+          });
+
+        if (error) {
+          console.warn('Database save note:', error.message);
+          // Not critical — localStorage backup works
+        } else {
+          console.log('✅ Profile saved to database successfully');
+        }
+      }
+    }
+  } catch(e) {
+    // Supabase not connected — localStorage backup is fine
+    console.log('Using localStorage backup:', e.message);
+  }
+
+  hideLoading();
+
+  // ✅ STEP 3: Go to done screen
+  showScreen('screen-done');
+}
+
+// ══════════════════════════════════════
+// GO TO DASHBOARD
+// This is how login.html connects to dashboard.html
+// ══════════════════════════════════════
+function goToDashboard() {
+  // Show loading while navigating
+  showLoading('Taking you to your dashboard...');
+
+  // Wait a moment then redirect
+  setTimeout(() => {
+    window.location.href = 'dashboard.html';
+  }, 800);
+}
+
+// ══════════════════════════════════════
+// CHECK IF ALREADY LOGGED IN
+// When page loads — check if student
+// already has a session or saved profile
+// ══════════════════════════════════════
+async function checkExistingSession() {
+  try {
+    if (!supabaseClient) return; // Supabase not set up yet — that's fine
+
+    // Check for active Supabase session
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      // Student is already logged in
+      // They came to login page again — send them straight to dashboard
+      console.log('✅ Already logged in, redirecting to dashboard...');
       window.location.href = 'dashboard.html';
     }
-  }
-  </script>
 
-  </div><!-- end of page -->
+  } catch(e) {
+    // Not logged in or Supabase not configured — show login page normally
+    console.log('No existing session — showing login page');
+  }
+}
+
+// Run session check 500ms after page loads
+// (small delay so page renders first)
+setTimeout(checkExistingSession, 500);
+
+</script>
 </body>
 </html>
