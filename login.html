@@ -10,7 +10,7 @@
 <script>
   const SUPABASE_URL = 'https://vufkaziitvgkzjwcfndt.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1ZmthemlpdHZna3pqd2NmbmR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTI1OTEsImV4cCI6MjA5NDc4ODU5MX0.A2WD6F0VTTAz0QjRc13qhA9AKCIN7Z4a4Mm5ILbPpJU';
-  let supabaseClient;
+  onst supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   try {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   } catch(e) {
